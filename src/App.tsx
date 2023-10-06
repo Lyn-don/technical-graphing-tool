@@ -3,6 +3,7 @@ import { useState,useRef,useEffect } from "react";
 //import { invoke } from "@tauri-apps/api/tauri";
 import "./App.css";
 import ImportUserFile from "./components/ImportUserFile";
+import CandleStickGraph from "./components/CandleStickGraph";
 function App() {  
 	const [fileData,setFileData] = useState("")
 	
@@ -10,21 +11,8 @@ function App() {
   return (
     <div className="container">
     	<ImportUserFile setFileData={setFileData}/>
-
-	{<table>
-		<thead>
-			<tr>
-				{Object.keys(fileData) ? Object.keys(fileData).map((e,i)=>{<th key={i}>{e}</th>}): null}
-
-			</tr>
-		</thead>
-		<tbody>
-			
-
-		</tbody>
-		</table>}	      	
-	
-    </div>
+	<CandleStickGraph data={fileData}/>
+   </div>
   );
 }
 

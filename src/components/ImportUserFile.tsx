@@ -1,5 +1,6 @@
 import {useRef,useState,useEffect} from "react"
 import {readString,readRemoteFile} from "react-papaparse"
+import Moment from "moment"
 
 function ImportUserFile({setFileData}){
 	const inputFileRef = useRef<HTMLInputElement|null>(null);
@@ -15,7 +16,17 @@ function ImportUserFile({setFileData}){
 			}
 			jsonArray.push(json);
 		}
-		return jsonArray
+		let date = new Date()
+		jsonArray = jsonArray.map(
+			function(ja){
+				Moment.locale('en')
+					//time:Moment(ja["Open time"]).format("YYYY-MM-DD"),
+				return {
+					time:Moment(ja["Open time"]).unix(),
+					value:+ja["Close"]
+
+				}})
+		return jsonArray.slice(0,jsonArray.length -2)	
 	}
 
 	function getCsv(fileDir:File){
@@ -38,7 +49,6 @@ function ImportUserFile({setFileData}){
 				getCsv(e.target.files[0]);	
 			}else{
 				//tell the user the file is too large
-			
 				inputFileRef.current.value = ""
 			}
 
