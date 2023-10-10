@@ -1,5 +1,5 @@
 import { createChart, ColorType } from 'lightweight-charts';
-import { useEffect, useRef } from 'react';
+import React,{ useEffect, useRef } from 'react';
 
 type CandleStickGraphProps = {
 	data:Array<object>
@@ -7,49 +7,40 @@ type CandleStickGraphProps = {
 
 function CandleStickGraph({data}){
 	
-	const chartContainerRef = useRef<HTMLElement|null>(null);
+	const chartContainerRef = useRef<HTMLDivElement>();
 		
 	
 	useEffect(() => {
 		console.log(data.length);
 		if(data.length>1){
+			data = data.map((d)=>{
+				
+				return{time:d["time"]*1000,open:d["open"],high:d["high"],low:d["low"],close:d["close"]}
+			})
 			console.log(data)
-			console.log(data.slice(data.length-10,data.length))
-
-			function handleResize(){
-				chart.applyOptions({ width: chartContainerRef.current.clientWidth });
-			}
-	
-
 			let chart = createChart(chartContainerRef.current, {
 				layout: {
 					background: { type: ColorType.Solid, color: "white" },
-					textColor: "black",
+					textColor:"black",
 				},
-				width: chartContainerRef.current.clientWidth,
+				width: chartContainerRef.current?.clientWidth,
 				height: 300,
+			
+		
+			})
+			const candlestickSeries = chart.addCandlestickSeries({
+    				upColor: '#26a69a', downColor: '#ef5350', borderVisible: false,
+    				wickUpColor: '#26a69a', wickDownColor: '#ef5350',
+				
 			});
-			chart.timeScale().fitContent();
 			
-			
-
-			const newSeries = chart.addAreaSeries({lineColor:"#2962FF",topColor: "#2962FF", bottomColor: "rgba(41, 98, 255, 0.28)"});
-			newSeries.setData(data)
-
-			console.log(newSeries)
-			
-			window.addEventListener('resize', handleResize);
-			
-			return () => {
-				window.removeEventListener('resize', handleResize);
-
-				chart.remove();
-			};
-			}
+			candlestickSeries.setData(data)
+			console.log(chartContainerRef);
+		}
 		},[data]);
 
 	return (
-		<div
+		<div className="graph"
 			ref={chartContainerRef}
 		/>
 	);

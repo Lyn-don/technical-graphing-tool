@@ -128,6 +128,9 @@ function SelectColumns({data,setData}){
 					console.log(selectedColumns["open"])
 				*/
 					let new_data = data.map(function(item:object){
+						
+						console.log(selectedColumns);
+
 						return {time:Moment(item[selectedColumns["time"]]).unix(),
 							open:+item[selectedColumns["open"]],
 							high:+item[selectedColumns["high"]],

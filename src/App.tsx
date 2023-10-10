@@ -17,7 +17,7 @@ function App() {
     	<ImportUserFile setFileData={setFileData} setMessage={setMessage}/>
 	<SelectColumns data={fileData} setData={setSelectedData}/>
 	{/*(selectedData.length > 1) ? <CandleStickGraph data={selectedData}/> : null*/}
-	<CandleStickGraph data={setSelectedData}/>
+	<CandleStickGraph data={selectedData}/>
 	
    </div>
   );
