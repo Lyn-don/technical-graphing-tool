@@ -11,7 +11,13 @@ function CandleStickGraph({data}){
 		
 	
 	useEffect(() => {
-		console.log(data.length);
+		
+		/*
+		if(chartContainerRef.current.children){
+			chartContainerRef.current.removeChild(chartContainerRef.current.children[0])
+		}
+		*/
+
 		if(data.length>1){
 			data = data.map((d)=>{
 				
@@ -25,7 +31,11 @@ function CandleStickGraph({data}){
 				},
 				width: chartContainerRef.current?.clientWidth,
 				height: 300,
-			
+				timeScale:{
+					secondsVisible:true,
+					ticksVisible:true,
+					timeVisible:true
+				}
 		
 			})
 			const candlestickSeries = chart.addCandlestickSeries({

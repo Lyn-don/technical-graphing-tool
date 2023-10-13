@@ -1,80 +1,72 @@
-import {useRef,useState,useEffect} from "react"
-import {readString,readRemoteFile} from "react-papaparse"
+import { useRef, useState } from "react";
+import { readString, readRemoteFile, usePapaParse } from "react-papaparse";
+import Papa from "papaparse";
+import { config } from "process";
 
 /*Compont Info:
  *A input component that gets the user csv the data is converted
  *to a array of objects and stored to the pareent useState.
  */
 
+interface Props {
+  setFileData: React.Dispatch<React.SetStateAction<Array<Array<string>>>>;
+  setMessage: React.Dispatch<React.SetStateAction<string>>;
+}
 
-function ImportUserFile({setFileData,setMessage}){
-	const inputFileRef = useRef<HTMLInputElement|null>(null);
-	
-	//convert a csv 2d array to json object
-	function twoDArrayToJson(twoDArray:Array<Array<any>>): Array<object>{
-		
-		//initize the return array
-		let jsonArray: Array<object> = [];
+function ImportUserFile({ setFileData, setMessage }: Props) {
+  const inputFileRef = useRef<HTMLInputElement | null>(null);
+  const [rawData, setRawData] = useState([]);
 
-		//the first element will contain a list of the csv columns
-		let jsonProps: Array<string> = twoDArray[0];
-		
-		for(let x: number = 1; twoDArray.length > x; x++){
-			let json:object = {};
-			for(let y: number = 0; jsonProps.length > y; y++){
-				//used to select the prop in json object
-				let property: string = jsonProps[y]
-				json[property] = twoDArray[x][y];
-			}
-			jsonArray.push(json);
-		}
-		/*	
-		jsonArray = jsonArray.map(
-			function(ja){
-				Moment.locale('en')
-				return {
-					time:Moment(ja[jsonProps[0]]).unix(),
-					value:+ja["Close"]
-				}});
-		*/
-		console.log(jsonArray);
-		return jsonArray.slice(0,100);	
-	};
+  function getCsv(file: File) {
+    setMessage("Loading in file...");
 
-	function getCsv(fileDir:File){
-			readRemoteFile(fileDir, {
-      			complete: (results) => {
-				try{
-        	 			setFileData(twoDArrayToJson(results.data));
-					setMessage("Set the columns for the graph.")
-				}catch(err){
-					console.log(err)
-					setMessage("The file has invalied foramt.")
-				}
-      			},
-    		})		
-	};
+    let data: Array<Array<string>> = [];
 
-	return(<div>
-		<input onChange={(e)=>{
-			if(e.target.files && inputFileRef.current){
-				e.preventDefault()
-				let fileSize : number = +e.target.files[0].size	
+    //This is the function that reads the csv file
+    //Ignore the warning about the type of the results
+    readRemoteFile(file, {
+      header: true,
+      skipEmptyLines: true,
+      chunkSize: 6000000,
+      worker: true,
 
-				//checks if the file is not larger the 300 megabytes
-				if(fileSize/1000000 < 300){
-					//only run fuction if the file exist
-					getCsv(e.target.files[0]);	
-				}else{
-					//tell the user the file is too large
-					inputFileRef.current.value = ""
-					setMessage("The file has to less the 300MB.")
-				}
-			}
-			}} 
-			ref={inputFileRef} type="file" id="dataset_file" accept=".csv"/>
-		
-			</div>)
+      chunk: function (results: Papa.ParseResult<Array<string>>) {
+        data.push(...results.data);
+
+        setMessage(
+          `Loading file\n${(results.meta.cursor / 1000000).toFixed(1)}/${(
+            file.size / 1000000
+          ).toFixed(1)} MB`
+        );
+
+        if (file.size === results.meta.cursor) {
+          setFileData(data);
+          setMessage("File has been uploaded.");
+        }
+      },
+    });
+  }
+
+  return (
+    <div>
+      <input
+        onChange={(e) => {
+          if (e.target.files && inputFileRef.current) {
+            e.preventDefault();
+            let fileSize: number = +e.target.files[0].size;
+            console.log(fileSize);
+            //checks if the file is not larger the 300 megabytes
+
+            getCsv(e.target?.files[0]);
+          }
+        }}
+        ref={inputFileRef}
+        type="file"
+        id="dataset_file"
+        accept=".csv"
+      />
+    </div>
+  );
 }
 
 export default ImportUserFile;
