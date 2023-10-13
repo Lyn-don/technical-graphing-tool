@@ -15,7 +15,9 @@ function App() {
   return (
     <div ref={appRef} className="container">
       <button className="menu-button" onClick={(e) => {}}>
-        |||
+      	<div className="menu-icon"></div>
+	<div className="menu-icon"></div>
+	<div className="menu-icon"></div>
       </button>
       <div className="menu">
         {" "}
@@ -23,8 +25,7 @@ function App() {
         <ImportUserFile setFileData={setFileData} setMessage={setMessage} />
         <SelectColumns data={fileData} setData={setSelectedData} />
       </div>
-      {/*(selectedData.length > 1) ? <CandleStickGraph data={selectedData}/> : null
-		<CandleStickGraph data={selectedData}/>*/}
+      {(selectedData.length > 1) ? <CandleStickGraph data={selectedData}/> : null}
     </div>
   );
 }

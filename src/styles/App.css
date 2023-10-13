@@ -1,6 +1,26 @@
+.container {
+  margin: 0;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+}
+
 .menu-button {
-  rotate: 90deg;
+
   width: 3em;
   height: 3em;
   text-align: center;
+}
+
+.menu-button:hover{
+	background: #ffffff;
+}
+
+.menu-icon {
+  width: 35px;
+  height: 3px;
+  background-color: #b4b4b4;
+  margin: 6px 0;
 }

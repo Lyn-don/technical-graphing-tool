@@ -3,6 +3,7 @@ import { readString, readRemoteFile, usePapaParse } from "react-papaparse";
 import Papa from "papaparse";
 import { config } from "process";
 
+import "../styles/ImportUserFile.css"
 /*Compont Info:
  *A input component that gets the user csv the data is converted
  *to a array of objects and stored to the pareent useState.
@@ -18,18 +19,18 @@ function ImportUserFile({ setFileData, setMessage }: Props) {
   const [rawData, setRawData] = useState([]);
 
   function getCsv(file: File) {
-    setMessage("Loading in file...");
-
-    let data: Array<Array<string>> = [];
+    	setMessage("Loading in file...");
+    	let data: Array<Array<string>> = [];
 
     //This is the function that reads the csv file
     //Ignore the warning about the type of the results
+
     readRemoteFile(file, {
       header: true,
       skipEmptyLines: true,
-      chunkSize: 6000000,
+      chunkSize: 3000000,
       worker: true,
-
+	
       chunk: function (results: Papa.ParseResult<Array<string>>) {
         data.push(...results.data);
 
@@ -45,10 +46,11 @@ function ImportUserFile({ setFileData, setMessage }: Props) {
         }
       },
     });
+    
   }
 
   return (
-    <div>
+    <div className="div--import-user-file">
       <input
         onChange={(e) => {
           if (e.target.files && inputFileRef.current) {

@@ -128,21 +128,44 @@ function SelectColumns({ data, setData }: Props) {
               <option key={index}>{option}</option>
             ))}
           </select>
-        </li>
-      </ul>
-      <button
+        </li>      <button
         onClick={function () {
           console.log(selectedColumns);
-
+	  let o = Object.keys(selectedColumns).filter((k) => selectedColumns[k] != null).reduce((a, k) => ({ ...a, [k]: selectedColumns[k] }), {});
+		console.log(o)
           //get a list of the not used columns
-          let time = data.map(
-            (el) => new Date(el[selectedColumns["time"]]).valueOf() / 1000
-          );
+		
+		let selected_data = data.map((el)=>{
+			
+			return{
+				
+			}
+		})
+
+	  /*
           let open = data.map((el) => el[selectedColumns["open"]]);
           let high = data.map((el) => el[selectedColumns["high"]]);
           let low = data.map((el) => el[selectedColumns["low"]]);
           let close = data.map((el) => el[selectedColumns["close"]]);
           let volume = data.map((el) => el[selectedColumns["volume"]]);
+	
+		
+	let selected_data = data.map((el)=>{
+		
+		let new_array = []
+		time: new Date(el["time"]).valueOf(),
+		open: +el["open"],
+		high: +el["high"],
+		low: +el["low"],
+		close: +el["close"],
+		volume: +el["volumne"]}
+		let drop_column = []
+		column.forEach(item){
+			if(new_array.map(arr => arr[item]).includes(NaN)){
+				
+			}
+		}
+	})*/
 
           let testArrays: Array<Array<number | Date>> = [
             time,
@@ -159,6 +182,8 @@ function SelectColumns({ data, setData }: Props) {
       >
         Graph Columns
       </button>
+
+      </ul>
     </div>
   );
 }

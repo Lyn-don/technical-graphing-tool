@@ -1,6 +1,4 @@
 .select-columns {
-  display: flex;
-  flex-direction: column;
   justify-content: center;
   border-top: 1px solid #dadada;
   border-bottom: 1px solid #dadada;
