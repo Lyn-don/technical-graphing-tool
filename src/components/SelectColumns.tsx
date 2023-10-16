@@ -50,13 +50,13 @@ function SelectColumns({ fileData, setSelectedData }: Props) {
     if (fileData.length > 1) {
       setColumns(Object.keys(fileData[0]));
       console.log(columns);
-      /*selectRef.current!.value = "Select one...";
+      selectRef.current!.value = "Select one...";
       selectRef2.current!.value = "Select one...";
       selectRef3.current!.value = "Select one...";
       selectRef4.current!.value = "Select one...";
       selectRef5.current!.value = "Select one...";
       selectRef6.current!.value = "Select one...";
-      selectRef7.current!.value = "Select one...";*/
+      selectRef7.current!.value = "Select one...";
     }
   }, [fileData]);
 
@@ -174,7 +174,7 @@ function SelectColumns({ fileData, setSelectedData }: Props) {
 
             console.log(selectedColumns);
 
-            let process_fileData = fileData.map((el) => {
+            let processFileData = fileData.map((el) => {
               return {
                 time: new Date(el[selectedColumns["time"]]).valueOf() / 1000,
                 open: +el[selectedColumns["open"]],
@@ -186,9 +186,9 @@ function SelectColumns({ fileData, setSelectedData }: Props) {
               };
             });
 
-            console.log(process_fileData);
+            console.log(processFileData);
 
-            let selectedFileData = process_fileData.map((el) => {
+            let selectedFileData = processFileData.map((el) => {
               let o = Object.keys(selectedColumns).filter(
                 (k) => selectedColumns[k] != ""
               );
@@ -198,15 +198,15 @@ function SelectColumns({ fileData, setSelectedData }: Props) {
               });
               return obj;
             });
+		
 
-            if (!Object.keys(selectedFileData[0]).includes("signal")) {
-              selectedFileData.forEach((el) => {
-                el["ml_signal"] = 0;
-              });
+            if (!Object.keys(selectedFileData[0]).includes("ml_signal")) {
+	    	console.log("HELLO!")
+        	selectedFileData = selectedFileData.map(array=>({...array,ml_signal: 0}));
             }
 
             console.log(selectedFileData);
-            setSelectedColumns({
+           /* setSelectedColumns({
               time: "",
               open: "",
               high: "",
@@ -214,7 +214,7 @@ function SelectColumns({ fileData, setSelectedData }: Props) {
               close: "",
               volume: "",
               ml_signal: "",
-            });
+            });*/
             setSelectedData(selectedFileData);
           }}
         >

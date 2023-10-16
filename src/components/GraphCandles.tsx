@@ -1,5 +1,5 @@
-import { createChart, ColorType } from "lightweight-charts";
-import React, { useEffect, useRef } from "react";
+import { createChart, ColorType, Time } from "lightweight-charts";
+import React, { useEffect, useRef, useState } from "react";
 import "../styles/Graphs.css";
 
 type Props = {
@@ -9,7 +9,10 @@ type Props = {
 
 function GraphCandles({ selectedData, setSelectedData }: Props) {
   const chartContainerRef = useRef<HTMLDivElement>();
-  const [mark, setMark] = React.useState<number>(0);
+  const [mark, setMark] = useState<number>(0);
+const [from,setFrom] = useState<Time>();
+const [to,setTo] = useState<Time>();
+
   useEffect(() => {
     if (chartContainerRef.current?.children.length) {
       chartContainerRef.current.removeChild(
@@ -34,7 +37,8 @@ function GraphCandles({ selectedData, setSelectedData }: Props) {
         },
       });
 
-      chart.timeScale().fitContent();
+	
+
 
       chart.subscribeDblClick((param) => {
         console.log(param);
@@ -43,16 +47,16 @@ function GraphCandles({ selectedData, setSelectedData }: Props) {
         if (index > selectedData.length - 8) return;
         //skip if already marked
         if (selectedData[index]["ml_signal"] == 1) return;
-
         //if any of the next 8 candles is already marked, skip
-        let next8 = selectedData.slice(index, index + 8);
-        if (next8.some((el) => el["ml_signal"] == 1)) return;
-
-        for (let i = index; i < index + 8; i++) {
+        let last8 = selectedData.slice(index-7, index);
+        if (last8.some((el) => el["ml_signal"] == 1)) return;
+	//backfill the marks on the graph by 8
+        for (let i = index; i > index - 8; i--) {
           selectedData[i]["ml_signal"] = 1;
         }
-        console.log(selectedData.slice(index - 1, index + 9));
-        console.log(param.sourceEvent);
+	setFrom(chart.timeScale().getVisibleRange().from);
+	setTo(chart.timeScale().getVisibleRange().to);
+      	
         setSelectedData(selectedData);
         setMark(index);
       });
@@ -75,43 +79,20 @@ function GraphCandles({ selectedData, setSelectedData }: Props) {
           };
         });
 
-        console.log(markData);
-
         candlestickSeries.setData(selectedData);
         candlestickSeries.setMarkers(markData);
       }
-      /*
-      if (keys.includes("time") && keys.length <= 4) {
-        const newSeries = chart.addAreaSeries({
-          lineColor: "#26a69a",
-          topColor: "#26a69a",
-        });
-
-        let value_column: string = keys.filter(
-          (el) => el != "time" && el != "volume"
-        )[0];
-        console.log(value_column);
-        let lineData = selectedData.map((d) => {
-          return {
-            time: d["time"],
-            value: d[value_column],
-          };
-        });
-        console.log(lineData);
-        newSeries.setData(lineData);
-      }*/
-
+      
       const handleResize = () => {
-        console.log("resize");
-        console.log(
-          chartContainerRef.current?.clientWidth,
-          chartContainerRef.current?.clientHeight
-        );
         chart.applyOptions({
           width: chartContainerRef.current?.clientWidth,
           height: chartContainerRef.current?.clientWidth / 2,
         });
       };
+
+	if(from && to){	
+	chart.timeScale().setVisibleRange({from: from,to: to})
+	}
 
       window.addEventListener("resize", handleResize);
 
