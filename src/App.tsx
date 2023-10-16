@@ -1,31 +1,42 @@
-import { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 //import as papa * from "papaparse"
 //import { invoke } from "@tauri-apps/api/tauri";
 
 import ImportUserFile from "./components/ImportUserFile";
-import CandleStickGraph from "./components/CandleStickGraph";
+import GraphCandles from "./components/GraphCandles";
 import SelectColumns from "./components/SelectColumns";
 
 import "./styles/App.css";
 function App() {
   const [fileData, setFileData] = useState<object>([]);
-  const [selectedData, setSelectedData] = useState([]);
+  const [selectedData, setSelectedData] = useState<Array<object>>([]);
   const [message, setMessage] = useState<string>("Select a csv file.");
   const appRef = useRef<HTMLDivElement>(null);
+
+  console.log(selectedData);
   return (
     <div ref={appRef} className="container">
-      <button className="menu-button" onClick={(e) => {}}>
-      	<div className="menu-icon"></div>
-	<div className="menu-icon"></div>
-	<div className="menu-icon"></div>
-      </button>
       <div className="menu">
-        {" "}
-        <h2>{message}</h2>
-        <ImportUserFile setFileData={setFileData} setMessage={setMessage} />
-        <SelectColumns data={fileData} setData={setSelectedData} />
+        {/*<div className="menu-button-wrapper">
+           <button className="menu-button" onClick={(e) => {}}>
+            <div className="menu-icon"></div>
+            <div className="menu-icon"></div>
+            <div className="menu-icon"></div>
+          </button>
+        </div>*/}
+        <div className="menu-content">
+          <ImportUserFile setFileData={setFileData} setMessage={setMessage} />
+          <SelectColumns
+            fileData={fileData}
+            setSelectedData={setSelectedData}
+          />
+        </div>
       </div>
-      {(selectedData.length > 1) ? <CandleStickGraph data={selectedData}/> : null}
+
+      <GraphCandles
+        selectedData={selectedData}
+        setSelectedData={setSelectedData}
+      />
     </div>
   );
 }

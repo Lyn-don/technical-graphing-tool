@@ -38,8 +38,10 @@
         "fullscreen": false,
         "resizable": true,
         "title": "technical-graph-editor",
-        "width": 800,
-        "height": 600
+        "width": 1000,
+        "height": 800,
+        "minWidth": 300,
+        "maxHeight": 100
       }
     ]
   }

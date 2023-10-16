@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "../styles/SelectColumns.css";
+
 interface Ohlcv {
   time: number | string;
   open: number | string;
@@ -7,6 +8,7 @@ interface Ohlcv {
   low: number | string;
   close: number | string;
   volume: number | string;
+  ml_signal: number | string;
 }
 
 interface SelectColumns {
@@ -16,16 +18,16 @@ interface SelectColumns {
   low: string;
   close: string;
   volume: string;
+  ml_signal: string;
 }
 
 interface Props {
-  data: Array<Ohlcv>;
-  setData: React.Dispatch<React.SetStateAction<object>>;
+  fileData: Array<Ohlcv>;
+  setSelectedData: React.Dispatch<React.SetStateAction<object>>;
 }
 
-function SelectColumns({ data, setData }: Props) {
+function SelectColumns({ fileData, setSelectedData }: Props) {
   const [columns, setColumns] = useState<Array<string>>([]);
-  //const [graphData,setGraphData] = useState<Array<object>>([])
   const [selectedColumns, setSelectedColumns] = useState<SelectColumns>({
     time: "",
     open: "",
@@ -33,14 +35,30 @@ function SelectColumns({ data, setData }: Props) {
     low: "",
     close: "",
     volume: "",
+    ml_signal: "",
   });
 
+  const selectRef = React.createRef<HTMLSelectElement>();
+  const selectRef2 = React.createRef<HTMLSelectElement>();
+  const selectRef3 = React.createRef<HTMLSelectElement>();
+  const selectRef4 = React.createRef<HTMLSelectElement>();
+  const selectRef5 = React.createRef<HTMLSelectElement>();
+  const selectRef6 = React.createRef<HTMLSelectElement>();
+  const selectRef7 = React.createRef<HTMLSelectElement>();
+
   useEffect(() => {
-    if (data.length) {
-      setColumns(Object.keys(data[0]));
+    if (fileData.length > 1) {
+      setColumns(Object.keys(fileData[0]));
       console.log(columns);
+      /*selectRef.current!.value = "Select one...";
+      selectRef2.current!.value = "Select one...";
+      selectRef3.current!.value = "Select one...";
+      selectRef4.current!.value = "Select one...";
+      selectRef5.current!.value = "Select one...";
+      selectRef6.current!.value = "Select one...";
+      selectRef7.current!.value = "Select one...";*/
     }
-  }, [data]);
+  }, [fileData]);
 
   return (
     <div className="select-columns">
@@ -48,6 +66,7 @@ function SelectColumns({ data, setData }: Props) {
         <li>
           <p>Time</p>
           <select
+            ref={selectRef}
             onChange={(e) => {
               selectedColumns["time"] = e.target.value;
             }}
@@ -62,6 +81,7 @@ function SelectColumns({ data, setData }: Props) {
         <li>
           <p>Open</p>
           <select
+            ref={selectRef2}
             onChange={(e) => {
               selectedColumns["open"] = e.target.value;
             }}
@@ -76,6 +96,7 @@ function SelectColumns({ data, setData }: Props) {
         <li>
           <p>High</p>
           <select
+            ref={selectRef3}
             onChange={(e) => {
               selectedColumns["high"] = e.target.value;
             }}
@@ -90,6 +111,7 @@ function SelectColumns({ data, setData }: Props) {
         <li>
           <p>Low</p>
           <select
+            ref={selectRef4}
             onChange={(e) => {
               selectedColumns["low"] = e.target.value;
             }}
@@ -104,6 +126,7 @@ function SelectColumns({ data, setData }: Props) {
         <li>
           <p>Close</p>
           <select
+            ref={selectRef5}
             onChange={(e) => {
               selectedColumns["close"] = e.target.value;
             }}
@@ -119,6 +142,7 @@ function SelectColumns({ data, setData }: Props) {
           <p>Volume</p>
 
           <select
+            ref={selectRef6}
             onChange={(e) => {
               selectedColumns["volume"] = e.target.value;
             }}
@@ -128,61 +152,74 @@ function SelectColumns({ data, setData }: Props) {
               <option key={index}>{option}</option>
             ))}
           </select>
-        </li>      <button
-        onClick={function () {
-          console.log(selectedColumns);
-	  let o = Object.keys(selectedColumns).filter((k) => selectedColumns[k] != null).reduce((a, k) => ({ ...a, [k]: selectedColumns[k] }), {});
-		console.log(o)
-          //get a list of the not used columns
-		
-		let selected_data = data.map((el)=>{
-			
-			return{
-				
-			}
-		})
+        </li>
+        <li>
+          <p>Signal</p>
 
-	  /*
-          let open = data.map((el) => el[selectedColumns["open"]]);
-          let high = data.map((el) => el[selectedColumns["high"]]);
-          let low = data.map((el) => el[selectedColumns["low"]]);
-          let close = data.map((el) => el[selectedColumns["close"]]);
-          let volume = data.map((el) => el[selectedColumns["volume"]]);
-	
-		
-	let selected_data = data.map((el)=>{
-		
-		let new_array = []
-		time: new Date(el["time"]).valueOf(),
-		open: +el["open"],
-		high: +el["high"],
-		low: +el["low"],
-		close: +el["close"],
-		volume: +el["volumne"]}
-		let drop_column = []
-		column.forEach(item){
-			if(new_array.map(arr => arr[item]).includes(NaN)){
-				
-			}
-		}
-	})*/
+          <select
+            ref={selectRef7}
+            onChange={(e) => {
+              selectedColumns["ml_signal"] = e.target.value;
+            }}
+          >
+            <option>Select one...</option>
+            {columns.map((option, index) => (
+              <option key={index}>{option}</option>
+            ))}
+          </select>
+        </li>
+        <button
+          onClick={function () {
+            console.log(fileData);
 
-          let testArrays: Array<Array<number | Date>> = [
-            time,
-            open,
-            high,
-            low,
-            close,
-            volume,
-          ];
-          console.log(time);
+            console.log(selectedColumns);
 
-          setData(data);
-        }}
-      >
-        Graph Columns
-      </button>
+            let process_fileData = fileData.map((el) => {
+              return {
+                time: new Date(el[selectedColumns["time"]]).valueOf() / 1000,
+                open: +el[selectedColumns["open"]],
+                high: +el[selectedColumns["high"]],
+                low: +el[selectedColumns["low"]],
+                close: +el[selectedColumns["close"]],
+                volume: +el[selectedColumns["volume"]],
+                ml_signal: +el[selectedColumns["ml_signal"]],
+              };
+            });
 
+            console.log(process_fileData);
+
+            let selectedFileData = process_fileData.map((el) => {
+              let o = Object.keys(selectedColumns).filter(
+                (k) => selectedColumns[k] != ""
+              );
+              let obj = {};
+              o.forEach((col_names) => {
+                obj[col_names] = el[col_names];
+              });
+              return obj;
+            });
+
+            if (!Object.keys(selectedFileData[0]).includes("signal")) {
+              selectedFileData.forEach((el) => {
+                el["ml_signal"] = 0;
+              });
+            }
+
+            console.log(selectedFileData);
+            setSelectedColumns({
+              time: "",
+              open: "",
+              high: "",
+              low: "",
+              close: "",
+              volume: "",
+              ml_signal: "",
+            });
+            setSelectedData(selectedFileData);
+          }}
+        >
+          Graph Columns
+        </button>
       </ul>
     </div>
   );

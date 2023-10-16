@@ -1,7 +1,7 @@
-.div--import-user-file{
-	display: flex;
-	align-items: center;
-	justify-items: center;
-	background: blue;
-
+.div--import-user-file {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  height: 2.5em;
 }
