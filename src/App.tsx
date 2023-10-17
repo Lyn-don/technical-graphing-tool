@@ -1,19 +1,21 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef } from "react";
 //import as papa * from "papaparse"
 //import { invoke } from "@tauri-apps/api/tauri";
 
 import ImportUserFile from "./components/ImportUserFile";
 import GraphCandles from "./components/GraphCandles";
 import SelectColumns from "./components/SelectColumns";
-
+import SaveFile from "./components/SaveFile";
 import "./styles/App.css";
 function App() {
-  const [fileData, setFileData] = useState<object>([]);
+  const [fileData, setFileData] = useState<Array<object>>([]);
   const [selectedData, setSelectedData] = useState<Array<object>>([]);
   const [message, setMessage] = useState<string>("Select a csv file.");
   const appRef = useRef<HTMLDivElement>(null);
+	
+	console.log(selectedData);
 
-  console.log(selectedData);
+	//console.log(selectedData.slice(selectedData.length-25,selectedData.length));
   return (
     <div ref={appRef} className="container">
       <div className="menu">
@@ -25,11 +27,15 @@ function App() {
           </button>
         </div>*/}
         <div className="menu-content">
-          <ImportUserFile setFileData={setFileData} setMessage={setMessage} />
-          <SelectColumns
+	{message}
+        <ImportUserFile setFileData={setFileData} setMessage={setMessage} />
+          
+	<SelectColumns
             fileData={fileData}
             setSelectedData={setSelectedData}
-          />
+	    />
+
+	<SaveFile fileData={fileData} selectedData={selectedData}/>
         </div>
       </div>
 
@@ -37,6 +43,8 @@ function App() {
         selectedData={selectedData}
         setSelectedData={setSelectedData}
       />
+	
+
     </div>
   );
 }

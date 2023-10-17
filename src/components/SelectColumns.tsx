@@ -49,16 +49,24 @@ function SelectColumns({ fileData, setSelectedData }: Props) {
   useEffect(() => {
     if (fileData.length > 1) {
       setColumns(Object.keys(fileData[0]));
-      console.log(columns);
-      selectRef.current!.value = "Select one...";
-      selectRef2.current!.value = "Select one...";
-      selectRef3.current!.value = "Select one...";
-      selectRef4.current!.value = "Select one...";
-      selectRef5.current!.value = "Select one...";
-      selectRef6.current!.value = "Select one...";
-      selectRef7.current!.value = "Select one...";
-    }
-  }, [fileData]);
+      console.log(columns);	
+      		selectRef.current!.value = "Select one...";
+      		selectRef2.current!.value = "Select one...";
+      		selectRef3.current!.value = "Select one...";
+      		selectRef4.current!.value = "Select one...";
+      		selectRef5.current!.value = "Select one...";
+      		selectRef6.current!.value = "Select one...";
+      		selectRef7.current!.value = "Select one...";
+      }
+	/*if(columns.length>1){
+		selectRef.current!.value = columns[0];
+      		selectRef2.current!.value = columns[1];
+      		selectRef3.current!.value = columns[2];
+      		selectRef4.current!.value = columns[3];
+      		selectRef5.current!.value = columns[4];
+      		selectRef6.current!.value = columns[5]; 
+    	}else{}*/
+	  }, [fileData]);
 
   return (
     <div className="select-columns">
@@ -206,16 +214,7 @@ function SelectColumns({ fileData, setSelectedData }: Props) {
             }
 
             console.log(selectedFileData);
-           /* setSelectedColumns({
-              time: "",
-              open: "",
-              high: "",
-              low: "",
-              close: "",
-              volume: "",
-              ml_signal: "",
-            });*/
-            setSelectedData(selectedFileData);
+           	            setSelectedData(selectedFileData);
           }}
         >
           Graph Columns

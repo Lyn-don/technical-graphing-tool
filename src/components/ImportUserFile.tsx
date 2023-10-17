@@ -3,11 +3,9 @@ import { readString, readRemoteFile, usePapaParse } from "react-papaparse";
 import Papa from "papaparse";
 import { config } from "process";
 
-import "../styles/ImportUserFile.css";
 /*Compont Info:
  *A input component that gets the user csv the data is converted
- *to a array of objects and stored to the pareent useState.
- */
+ *to a array of objects and stored to the pareent useState.*/
 
 interface Props {
   setFileData: React.Dispatch<React.SetStateAction<Array<Array<string>>>>;
@@ -19,8 +17,8 @@ function ImportUserFile({ setFileData, setMessage }: Props) {
   const [rawData, setRawData] = useState([]);
 
   function getCsv(file: File) {
-    setMessage("Loading in file...");
-    let data: Array<Array<string>> = [];
+    	setMessage("Loading in file...");
+    	let data: Array<Array<string>> = [];
 
     //This is the function that reads the csv file
     //Ignore the warning about the type of the results
@@ -28,13 +26,13 @@ function ImportUserFile({ setFileData, setMessage }: Props) {
     readRemoteFile(file, {
       header: true,
       skipEmptyLines: true,
+      chunkSize: 3000000,
       worker: true,
-      chunkSize: 1000000,
-
+	
       chunk: function (results: Papa.ParseResult<Array<string>>) {
         data.push(...results.data);
-
-        setMessage(
+        
+	setMessage(
           `Loading file\n${(results.meta.cursor / 1000000).toFixed(1)}/${(
             file.size / 1000000
           ).toFixed(1)} MB`
@@ -46,16 +44,11 @@ function ImportUserFile({ setFileData, setMessage }: Props) {
         }
       },
     });
+    
   }
-  /**
-   *  bad
-   * {Datetime: "2023-01-29 18:31:00+00:00", Open: "23603.04296875", High: "23603.04296875", Low: "23603.04296875", Close: "23603.04296875", …}
-   * good
-   * {Open time: "2021-12-03 19:13:00+00:00", Open: "54789.12", High: "54795.77", Low: "54737.0", Close: "54770.47", …}
-   */
 
   return (
-    <div className="div--import-user-file">
+    <div>
       <input
         onChange={(e) => {
           if (e.target.files && inputFileRef.current) {

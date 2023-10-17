@@ -4,13 +4,15 @@ import "../styles/Graphs.css";
 
 type Props = {
   selectedData: Array<object>;
-  setSelectedData: React.Dispatch<React.SetStateAction<object>>;
+  setSelectedData: React.Dispatch<React.SetStateAction<Array<object>>>;
 };
 
 function GraphCandles({ selectedData, setSelectedData }: Props) {
-  const chartContainerRef = useRef<HTMLDivElement>();
-  const [mark, setMark] = useState<number>(0);
-const [from,setFrom] = useState<Time>();
+  	const chartContainerRef = useRef<HTMLDivElement>();
+  	const [mark, setMark] = useState<number>(0);
+//current viewable min x
+	const [from,setFrom] = useState<Time>();
+//cureent viewable max x
 const [to,setTo] = useState<Time>();
 
   useEffect(() => {
@@ -37,14 +39,9 @@ const [to,setTo] = useState<Time>();
         },
       });
 
-	
-
-
       chart.subscribeDblClick((param) => {
         console.log(param);
         let index = selectedData.findIndex((el) => el.time == param.time);
-        //skip if not last 8 candles
-        if (index > selectedData.length - 8) return;
         //skip if already marked
         if (selectedData[index]["ml_signal"] == 1) return;
         //if any of the next 8 candles is already marked, skip
@@ -57,6 +54,7 @@ const [to,setTo] = useState<Time>();
 	setFrom(chart.timeScale().getVisibleRange().from);
 	setTo(chart.timeScale().getVisibleRange().to);
       	
+	console.log(selectedData.slice(selectedData.length-25,selectedData.length))
         setSelectedData(selectedData);
         setMark(index);
       });
