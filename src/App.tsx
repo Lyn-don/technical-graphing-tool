@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 //import as papa * from "papaparse"
 //import { invoke } from "@tauri-apps/api/tauri";
 
@@ -12,10 +12,25 @@ function App() {
   const [selectedData, setSelectedData] = useState<Array<object>>([]);
   const [message, setMessage] = useState<string>("Select a csv file.");
   const appRef = useRef<HTMLDivElement>(null);
-	
-	console.log(selectedData);
 
-	//console.log(selectedData.slice(selectedData.length-25,selectedData.length));
+  console.log(selectedData);
+
+  //console.log(selectedData.slice(selectedData.length-25,selectedData.length));
+
+  useEffect(() => {
+    if (fileData.length > 1) {
+      setMessage("Select columns to display.");
+    }
+
+    if (selectedData.length > 1) {
+      setMessage("Double click on a candle to mark it.");
+    }
+
+    if (selectedData.length > 1 && fileData.length > 1) {
+      setMessage("Click on the button to save the file.");
+    }
+  }, [fileData, selectedData]);
+
   return (
     <div ref={appRef} className="container">
       <div className="menu">
@@ -27,15 +42,15 @@ function App() {
           </button>
         </div>*/}
         <div className="menu-content">
-	{message}
-        <ImportUserFile setFileData={setFileData} setMessage={setMessage} />
-          
-	<SelectColumns
+          {message}
+          <ImportUserFile setFileData={setFileData} setMessage={setMessage} />
+
+          <SelectColumns
             fileData={fileData}
             setSelectedData={setSelectedData}
-	    />
+          />
 
-	<SaveFile fileData={fileData} selectedData={selectedData}/>
+          <SaveFile fileData={fileData} selectedData={selectedData} />
         </div>
       </div>
 
@@ -43,8 +58,6 @@ function App() {
         selectedData={selectedData}
         setSelectedData={setSelectedData}
       />
-	
-
     </div>
   );
 }
