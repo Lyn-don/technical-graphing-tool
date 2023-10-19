@@ -1,19 +1,22 @@
 import { createChart, ColorType, Time } from "lightweight-charts";
+import SaveFile from "./SaveFile";
 import React, { useEffect, useRef, useState } from "react";
 import "../styles/Graphs.css";
 
 type Props = {
   selectedData: Array<object>;
-  setSelectedData: React.Dispatch<React.SetStateAction<Array<object>>>;
+  fileData: Array<object>;
 };
 
-function GraphCandles({ selectedData, setSelectedData }: Props) {
-  	const chartContainerRef = useRef<HTMLDivElement>();
-  	const [mark, setMark] = useState<number>(0);
-//current viewable min x
-	const [from,setFrom] = useState<Time>();
-//cureent viewable max x
-const [to,setTo] = useState<Time>();
+function GraphCandles({ selectedData, fileData }: Props) {
+  const chartContainerRef = useRef<HTMLDivElement>();
+  const [clickEventObject, setClickEventObject] = useState<object>({});
+  //current viewable min x
+  const [from, setFrom] = useState<Time>();
+  //cureent viewable max x
+  const [to, setTo] = useState<Time>();
+  //array of 1 and 0, 1 means marked
+  const [markedData, setMarkedData] = useState<Array<object>>([]);
 
   useEffect(() => {
     if (chartContainerRef.current?.children.length) {
@@ -39,24 +42,59 @@ const [to,setTo] = useState<Time>();
         },
       });
 
-      chart.subscribeDblClick((param) => {
+      //click candles to mark them
+      function handleClick(param: any): void {
         console.log(param);
+
         let index = selectedData.findIndex((el) => el.time == param.time);
-        //skip if already marked
-        if (selectedData[index]["ml_signal"] == 1) return;
-        //if any of the next 8 candles is already marked, skip
-        let last8 = selectedData.slice(index-7, index);
-        if (last8.some((el) => el["ml_signal"] == 1)) return;
-	//backfill the marks on the graph by 8
-        for (let i = index; i > index - 8; i--) {
-          selectedData[i]["ml_signal"] = 1;
+        console.log(index);
+        console.log("selectedData");
+        console.log(selectedData[index]);
+
+        if (param.sourceEvent.shiftKey) {
+          //skip if already marked
+          if (selectedData[index]["ml_signal"] == 0) return;
+          //backfill the marks on the graph by 8
+
+          let i = index;
+          while (selectedData[i]["ml_signal"] == 1) {
+            selectedData[i]["ml_signal"] = 0;
+            i++;
+          }
+
+          i = index - 1;
+
+          while (selectedData[i]["ml_signal"] == 1) {
+            selectedData[i]["ml_signal"] = 0;
+            i--;
+          }
+        } else {
+          //skip if already marked
+          if (selectedData[index]["ml_signal"] == 1) return;
+          //if any of the next 8 candles is already marked, skip
+          let last8 = selectedData.slice(index - 7, index);
+          if (last8.some((el) => el["ml_signal"] == 1)) return;
+          //backfill the marks on the graph by 8
+          for (let i = index; i > index - 8; i--) {
+            selectedData[i]["ml_signal"] = 1;
+          }
         }
-	setFrom(chart.timeScale().getVisibleRange().from);
-	setTo(chart.timeScale().getVisibleRange().to);
-      	
-	console.log(selectedData.slice(selectedData.length-25,selectedData.length))
-        setSelectedData(selectedData);
-        setMark(index);
+        //set the current viewable range
+        setFrom(chart.timeScale().getVisibleLogicalRange().from);
+        setTo(chart.timeScale().getVisibleLogicalRange().to);
+
+        setMarkedData(
+          selectedData.map((el) => {
+            return {
+              ml_signal: el.ml_signal,
+            };
+          })
+        );
+        setClickEventObject(param);
+      }
+
+      chart.subscribeDblClick((param) => {
+        handleClick(param);
       });
 
       if (keys.includes("time") && keys.length > 4) {
@@ -80,7 +118,7 @@ const [to,setTo] = useState<Time>();
         candlestickSeries.setData(selectedData);
         candlestickSeries.setMarkers(markData);
       }
-      
+
       const handleResize = () => {
         chart.applyOptions({
           width: chartContainerRef.current?.clientWidth,
@@ -88,28 +126,40 @@ const [to,setTo] = useState<Time>();
         });
       };
 
-	if(from && to){	
-	chart.timeScale().setVisibleRange({from: from,to: to})
-	}
+      if (from && to) {
+        chart.timeScale().setVisibleLogicalRange({ from: from, to: to });
+      }
 
+      console.log("selectedData");
+      console.log(selectedData);
+      console.log("fileData");
+      console.log(fileData);
+
+      //Events:
+
+      //window resize event
       window.addEventListener("resize", handleResize);
 
       return () => {
         window.removeEventListener("resize", handleResize);
-
         chart.remove();
       };
     }
-  }, [selectedData, mark]);
+  }, [selectedData, fileData, clickEventObject]);
 
-  return (
-    <div className="div--graph-historical-selectedData-container">
-      <div
-        className="div--graph-historical-selectedData"
-        ref={chartContainerRef}
-      ></div>
-    </div>
-  );
+  if (fileData.length && selectedData.length) {
+    return (
+      <div className="div--graph-historical-selectedData-container">
+        <div
+          className="div--graph-historical-selectedData"
+          ref={chartContainerRef}
+        ></div>
+        <SaveFile fileData={fileData} markedData={markedData} />
+      </div>
+    );
+  } else {
+    return <div className="div--graph-historical-selectedData-container"></div>;
+  }
 }
 
 export default GraphCandles;

@@ -23,11 +23,11 @@ interface SelectColumns {
 
 interface Props {
   fileData: Array<Ohlcv>;
+  fileColumns: Array<string>;
   setSelectedData: React.Dispatch<React.SetStateAction<object>>;
 }
 
-function SelectColumns({ fileData, setSelectedData }: Props) {
-  const [columns, setColumns] = useState<Array<string>>([]);
+function SelectColumns({ fileData, fileColumns, setSelectedData }: Props) {
   const [selectedColumns, setSelectedColumns] = useState<SelectColumns>({
     time: "",
     open: "",
@@ -48,8 +48,6 @@ function SelectColumns({ fileData, setSelectedData }: Props) {
 
   useEffect(() => {
     if (fileData.length > 1) {
-      setColumns(Object.keys(fileData[0]));
-      console.log(columns);
       selectRef.current!.value = "Select one...";
       selectRef2.current!.value = "Select one...";
       selectRef3.current!.value = "Select one...";
@@ -58,14 +56,6 @@ function SelectColumns({ fileData, setSelectedData }: Props) {
       selectRef6.current!.value = "Select one...";
       selectRef7.current!.value = "Select one...";
     }
-    /*if(columns.length>1){
-		selectRef.current!.value = columns[0];
-      		selectRef2.current!.value = columns[1];
-      		selectRef3.current!.value = columns[2];
-      		selectRef4.current!.value = columns[3];
-      		selectRef5.current!.value = columns[4];
-      		selectRef6.current!.value = columns[5]; 
-    	}else{}*/
   }, [fileData]);
 
   if (fileData.length > 1) {
@@ -82,7 +72,7 @@ function SelectColumns({ fileData, setSelectedData }: Props) {
             >
               <option>Select one...</option>
 
-              {columns.map((option, index) => (
+              {fileColumns.map((option, index) => (
                 <option key={index}>{option}</option>
               ))}
             </select>
@@ -97,7 +87,7 @@ function SelectColumns({ fileData, setSelectedData }: Props) {
             >
               <option>Select one...</option>
 
-              {columns.map((option, index) => (
+              {fileColumns.map((option, index) => (
                 <option key={index}>{option}</option>
               ))}
             </select>
@@ -112,7 +102,7 @@ function SelectColumns({ fileData, setSelectedData }: Props) {
             >
               <option>Select one...</option>
 
-              {columns.map((option, index) => (
+              {fileColumns.map((option, index) => (
                 <option key={index}>{option}</option>
               ))}
             </select>
@@ -127,7 +117,7 @@ function SelectColumns({ fileData, setSelectedData }: Props) {
             >
               <option>Select one...</option>
 
-              {columns.map((option, index) => (
+              {fileColumns.map((option, index) => (
                 <option key={index}>{option}</option>
               ))}
             </select>
@@ -142,7 +132,7 @@ function SelectColumns({ fileData, setSelectedData }: Props) {
             >
               <option>Select one...</option>
 
-              {columns.map((option, index) => (
+              {fileColumns.map((option, index) => (
                 <option key={index}>{option}</option>
               ))}
             </select>
@@ -157,7 +147,7 @@ function SelectColumns({ fileData, setSelectedData }: Props) {
               }}
             >
               <option>Select one...</option>
-              {columns.map((option, index) => (
+              {fileColumns.map((option, index) => (
                 <option key={index}>{option}</option>
               ))}
             </select>
@@ -172,7 +162,7 @@ function SelectColumns({ fileData, setSelectedData }: Props) {
               }}
             >
               <option>Select one...</option>
-              {columns.map((option, index) => (
+              {fileColumns.map((option, index) => (
                 <option key={index}>{option}</option>
               ))}
             </select>
@@ -183,7 +173,7 @@ function SelectColumns({ fileData, setSelectedData }: Props) {
 
               console.log(selectedColumns);
 
-              let processFileData = fileData.map((el) => {
+              let processFileData = fileData.map((el: Ohlcv) => {
                 return {
                   time: new Date(el[selectedColumns["time"]]).valueOf() / 1000,
                   open: +el[selectedColumns["open"]],

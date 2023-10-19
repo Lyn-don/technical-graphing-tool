@@ -9,30 +9,29 @@ import { config } from "process";
 
 interface Props {
   setFileData: React.Dispatch<React.SetStateAction<Array<Array<string>>>>;
+  setFileColumns: React.Dispatch<React.SetStateAction<Array<string>>>;
   setMessage: React.Dispatch<React.SetStateAction<string>>;
 }
 
-function ImportUserFile({ setFileData, setMessage }: Props) {
+function ImportUserFile({ setFileData, setFileColumns, setMessage }: Props) {
   const inputFileRef = useRef<HTMLInputElement | null>(null);
-  const [rawData, setRawData] = useState([]);
 
   function getCsv(file: File) {
-    	setMessage("Loading in file...");
-    	let data: Array<Array<string>> = [];
+    setMessage("Loading in file...");
+    let data: Array<Array<string>> = [];
 
     //This is the function that reads the csv file
     //Ignore the warning about the type of the results
-
     readRemoteFile(file, {
       header: true,
       skipEmptyLines: true,
       chunkSize: 3000000,
       worker: true,
-	
+
       chunk: function (results: Papa.ParseResult<Array<string>>) {
         data.push(...results.data);
-        
-	setMessage(
+
+        setMessage(
           `Loading file\n${(results.meta.cursor / 1000000).toFixed(1)}/${(
             file.size / 1000000
           ).toFixed(1)} MB`
@@ -40,11 +39,11 @@ function ImportUserFile({ setFileData, setMessage }: Props) {
 
         if (file.size === results.meta.cursor) {
           setFileData(data);
+          setFileColumns(results.meta.fields);
           setMessage("File has been uploaded.");
         }
       },
     });
-    
   }
 
   return (

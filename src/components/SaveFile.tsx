@@ -21,39 +21,34 @@ function combineArrayObjects(
 
 type Props = {
   fileData: Array<object>;
-  selectedData: Array<object>;
+  markedData: Array<number>;
 };
 
-function SaveFile({ fileData, selectedData }: Props) {
-  const [_fileData, setFileData] = useState<Array<object>>([]);
-  const [_selectedData, setSelectedData] = useState<Array<object>>([]);
+function SaveFile({ fileData, markedData }: Props) {
   const { CSVDownloader, Type } = useCSVDownloader();
-  const [data, setData] = useState();
+  const [data, setData] = useState([]);
 
   useEffect(() => {
-    setFileData(fileData);
-    setSelectedData(selectedData);
-
-    if (_fileData.length > 1 && _selectedData.length > 1) {
-      let marks = selectedData.map((el) => {
-        return { time: el["time"], ml_signal: el["ml_signal"] };
-      });
-
+    if (fileData.length && markedData.length) {
       console.log("fileData");
-      console.log(_fileData);
-      console.log("selectedData");
-      console.log(_selectedData);
+      console.log(fileData);
+      console.log("markedData");
+      console.log(markedData);
 
-      setData(combineArrayObjects(_fileData, marks));
+      setData(combineArrayObjects(fileData, markedData));
     }
-  }, [fileData, selectedData]);
+    console.log("fileData");
+    console.log(fileData);
+    console.log("markedData");
+    console.log(markedData);
+  }, [fileData, markedData]);
 
   if (data) {
     return (
       <div className="div--save-data">
         <CSVDownloader
           type={Type.Button}
-          filename={"test_2"}
+          filename={"test2"}
           bom={true}
           config={{ delimiter: "," }}
           data={data}
