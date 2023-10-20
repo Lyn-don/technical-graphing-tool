@@ -20,12 +20,14 @@ type TImportUserFile = {
 	setFileData: React.Dispatch<React.SetStateAction<object[]>>;
 	setFileColumns: React.Dispatch<React.SetStateAction<Array<string>>>;
 	setMessage: React.Dispatch<React.SetStateAction<string>>;
+	setSelectedData: React.Dispatch<React.SetStateAction<object[]>>;
 };
 
 function ImportUserFile({
 	setFileData,
 	setFileColumns,
 	setMessage,
+	setSelectedData,
 }: TImportUserFile) {
 	const inputFileRef = useRef<HTMLInputElement | null>(null);
 
@@ -72,6 +74,12 @@ function ImportUserFile({
 	return (
 		<div>
 			<input
+				onClick={() => {
+					setMessage("Select a csv file.");
+					setFileData([]);
+					setFileColumns([]);
+					setSelectedData([]);
+				}}
 				onChange={(e) => {
 					console.log(e);
 					if (e.target.files && inputFileRef.current) {

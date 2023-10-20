@@ -13,6 +13,7 @@ function App() {
 	const [fileColumns, setFileColumns] = useState<string[]>([]);
 	const [selectedData, setSelectedData] = useState<object[]>([]);
 	const [message, setMessage] = useState<string>("Select a csv file.");
+	const [graphMessage, setGraphMessage] = useState<string>("");
 	const appRef = useRef<HTMLDivElement>(null);
 
 	console.log(selectedData);
@@ -21,15 +22,13 @@ function App() {
 
 	useEffect(() => {
 		if (fileData.length > 1) {
-			setMessage("Select columns to display.");
-		}
-
-		if (selectedData.length > 1) {
-			setMessage("Double click on a candle to mark it.");
+			setMessage(
+				"Select the Time Open High Low Close columns to make the candle graph."
+			);
 		}
 
 		if (selectedData.length > 1 && fileData.length > 1) {
-			setMessage("Click on the button to save the file.");
+			setMessage("Graph plotted");
 		}
 	}, [fileData, selectedData]);
 
@@ -42,16 +41,24 @@ function App() {
 						setFileData={setFileData}
 						setFileColumns={setFileColumns}
 						setMessage={setMessage}
+						setSelectedData={setSelectedData}
 					/>
 
 					<SelectColumns
 						fileData={fileData}
 						fileColumns={fileColumns}
 						setSelectedData={setSelectedData}
+						setMessage={setMessage}
 					/>
 				</div>
 			</div>
-			<GraphCandles selectedData={selectedData} fileData={fileData} />
+			{graphMessage}
+			<GraphCandles
+				selectedData={selectedData}
+				fileData={fileData}
+				setMessage={setMessage}
+				setGraphMessage={setGraphMessage}
+			/>
 		</div>
 	);
 }

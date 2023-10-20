@@ -24,12 +24,14 @@ type TSelectedColumns = {
 	fileData: object[];
 	fileColumns: string[];
 	setSelectedData: React.Dispatch<React.SetStateAction<object[]>>;
+	setMessage: React.Dispatch<React.SetStateAction<string>>;
 };
 
 function SelectColumns({
 	fileData,
 	fileColumns,
 	setSelectedData,
+	setMessage,
 }: TSelectedColumns) {
 	const [selectedColumns, setSelectedColumns] = useState<TUserColumns>({
 		time: "",
@@ -230,6 +232,7 @@ function SelectColumns({
 											k as keyof typeof selectedColumns
 										] !== ""
 								);
+
 								let obj: { [key: string]: any } = {}; // add index signature to allow indexing with a string
 								o.forEach((col_names) => {
 									obj[col_names] =
@@ -247,13 +250,68 @@ function SelectColumns({
 								selectedFileData = selectedFileData.map(
 									(array) => ({
 										...array,
-										ml_signal: 0,
+										ml_signal: null,
 									})
 								);
 							}
-
+							console.log("RRRRR!W");
 							console.log(selectedFileData);
-							setSelectedData(selectedFileData);
+							console.log(selectedColumns);
+
+							let selectColumnsKeys: string[] =
+								Object.keys(selectedColumns);
+							for (let i = 1; i < selectColumnsKeys.length; i++) {
+								const key = selectColumnsKeys[
+									i
+								] as keyof TUserColumns;
+								if (selectedColumns[key] === "Select one...") {
+									selectedColumns[key] = "";
+								}
+							}
+
+							if (
+								selectedColumns["time"] == "" ||
+								selectedColumns["open"] == "" ||
+								selectedColumns["high"] == "" ||
+								selectedColumns["low"] == "" ||
+								selectedColumns["close"] == ""
+							) {
+								setSelectedColumns({
+									time:
+										selectedColumns["time"] == ""
+											? ""
+											: selectedColumns["time"],
+									open:
+										selectedColumns["open"] == ""
+											? ""
+											: selectedColumns["open"],
+									high:
+										selectedColumns["high"] == ""
+											? ""
+											: selectedColumns["high"],
+									low:
+										selectedColumns["low"] == ""
+											? ""
+											: selectedColumns["low"],
+									close:
+										selectedColumns["close"] == ""
+											? ""
+											: selectedColumns["close"],
+									volume:
+										selectedColumns["volume"] == ""
+											? ""
+											: selectedColumns["volume"],
+									ml_signal:
+										selectedColumns["ml_signal"] == ""
+											? ""
+											: selectedColumns["ml_signal"],
+								});
+								setMessage(
+									"Please select a option for Time Open High Low Close"
+								);
+							} else {
+								setSelectedData(selectedFileData);
+							}
 						}}
 					>
 						Graph Columns

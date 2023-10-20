@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useCSVDownloader, jsonToCSV } from "react-papaparse";
 
 function combineArrayObjects(
@@ -22,11 +22,15 @@ function combineArrayObjects(
 type Props = {
 	fileData: Array<object>;
 	markedData: Array<object>;
+	setMessage: React.Dispatch<React.SetStateAction<string>>;
 };
 
-function SaveFile({ fileData, markedData }: Props) {
+function SaveFile({ fileData, markedData, setMessage }: Props) {
 	const { CSVDownloader, Type } = useCSVDownloader();
 	const [data, setData] = useState<object[]>([]);
+	const [filename, setFilename] = useState<string>(
+		`myEditedCsv_${Date.now().toString()}`
+	);
 
 	useEffect(() => {
 		if (fileData.length && markedData.length) {
@@ -48,13 +52,26 @@ function SaveFile({ fileData, markedData }: Props) {
 			<div className="div--save-data">
 				<CSVDownloader
 					type={Type.Button}
-					filename={"test2"}
+					filename={filename}
 					bom={true}
 					config={{ delimiter: "," }}
 					data={data}
+					onClick={() => {
+						setMessage("File downloaded to Downloads folder.");
+					}}
 				>
 					Download file
 				</CSVDownloader>
+				<input
+					type="text"
+					placeholder="Enter filename"
+					onChange={(e) => {
+						if (e.target.value) {
+							let text: string = e.target.value.split(".")[0];
+							setFilename(text);
+						}
+					}}
+				/>
 			</div>
 		);
 	} else {
