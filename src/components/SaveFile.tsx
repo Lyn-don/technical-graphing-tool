@@ -15,7 +15,7 @@ function combineArrayObjects(
 	for (let i = 0; i < arr1.length; i++) {
 		result.push(Object.assign({}, arr1[i], arr2[i]));
 	}
-	console.log(result);
+	//console.log(result);
 	return result;
 }
 
@@ -34,17 +34,8 @@ function SaveFile({ fileData, markedData, setMessage }: Props) {
 
 	useEffect(() => {
 		if (fileData.length && markedData.length) {
-			console.log("fileData");
-			console.log(fileData);
-			console.log("markedData");
-			console.log(markedData);
-
 			setData(combineArrayObjects(fileData, markedData));
 		}
-		console.log("fileData");
-		console.log(fileData);
-		console.log("markedData");
-		console.log(markedData);
 	}, [fileData, markedData]);
 
 	if (data) {

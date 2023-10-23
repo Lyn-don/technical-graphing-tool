@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import "../styles/SelectColumns.css";
 type TOhlcv = {
-	time: number;
-	open: number;
-	high: number;
-	low: number;
-	close: number;
-	volume: number;
-	ml_signal: number;
+	time: number | null;
+	open: number | null;
+	high: number | null;
+	low: number | null;
+	close: number | null;
+	volume: number | null;
+	ml_signal: number | null;
 };
 
 type TUserColumns = {
@@ -42,7 +42,7 @@ function SelectColumns({
 		volume: "",
 		ml_signal: "",
 	});
-
+	console.log("RRRRR!W");
 	const selectRef = React.createRef<HTMLSelectElement>();
 	const selectRef2 = React.createRef<HTMLSelectElement>();
 	const selectRef3 = React.createRef<HTMLSelectElement>();
@@ -174,10 +174,6 @@ function SelectColumns({
 					</li>
 					<button
 						onClick={function () {
-							console.log(fileData);
-
-							console.log(selectedColumns);
-
 							let processFileData = fileData.map(function (
 								el: any
 							): TOhlcv {
@@ -215,14 +211,16 @@ function SelectColumns({
 										] as keyof typeof el
 									],
 									ml_signal:
-										+el[
-											selectedColumns[
-												"ml_signal"
-											] as keyof typeof el
-										],
+										el[selectedColumns["ml_signal"]] != ""
+											? +el[
+													selectedColumns[
+														"ml_signal"
+													] as keyof typeof el
+											  ]
+											: null,
 								};
 							});
-
+							console.log("lllllll");
 							console.log(processFileData);
 
 							let selectedFileData = processFileData.map((el) => {
@@ -241,6 +239,9 @@ function SelectColumns({
 								return obj;
 							});
 
+							console.log("pppppppp!");
+							console.log(selectedFileData);
+
 							if (
 								!Object.keys(selectedFileData[0]).includes(
 									"ml_signal"
@@ -254,9 +255,6 @@ function SelectColumns({
 									})
 								);
 							}
-							console.log("RRRRR!W");
-							console.log(selectedFileData);
-							console.log(selectedColumns);
 
 							let selectColumnsKeys: string[] =
 								Object.keys(selectedColumns);
@@ -310,6 +308,8 @@ function SelectColumns({
 									"Please select a option for Time Open High Low Close"
 								);
 							} else {
+								console.log("zzzzzz!");
+								console.log(selectedFileData);
 								setSelectedData(selectedFileData);
 							}
 						}}

@@ -45,7 +45,7 @@ function ImportUserFile({
 			worker: true,
 
 			chunk: function (results: Papa.ParseResult<Array<string>>) {
-				console.log(results.data);
+				console.log(results);
 				data.push(...results.data);
 
 				setMessage(
@@ -56,17 +56,27 @@ function ImportUserFile({
 
 				//console.log("file size:",file.size,"buffer size",results.meta.cursor);
 				//console.log(parseInt(file.size/10), parseInt(results.meta.cursor/10));
-				if (
+				/*if (
 					Math.round(file.size / 10) ===
 					Math.round(results.meta.cursor / 10)
 				) {
+					setMessage("File loaded.");
+					console.log(data);
 					setFileData(data);
 
 					if (results.meta.fields) {
 						setFileColumns(results.meta.fields);
 					}
 					setMessage("File has been uploaded.");
-				}
+				}*/
+			},
+
+			complete() {
+				setMessage("File loaded.");
+				console.log(data);
+				setFileData(data);
+				setFileColumns(Object.keys(data[0]));
+				setMessage("File has been uploaded.");
 			},
 		});
 	}

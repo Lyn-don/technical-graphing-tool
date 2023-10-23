@@ -73,9 +73,6 @@ function GraphCandles({
 				let index = selectedData.findIndex(
 					(el) => el.time == param.time
 				);
-				console.log(index);
-				console.log("selectedData");
-				console.log(selectedData[index]);
 
 				//delete marks double click + ctrl
 				if (param.sourceEvent.ctrlKey) {
@@ -196,12 +193,10 @@ function GraphCandles({
 					};
 				});
 
+				//concat all the mark data together
 				let markData = markData1.concat(markData0);
 				markData = markData.concat(markDataN1);
 				markData = markData.sort((a, b) => a.time - b.time);
-
-				console.log("FFF");
-				console.log(markData);
 
 				candlestickSeries.setData(selectedData);
 				candlestickSeries.setMarkers(markData);

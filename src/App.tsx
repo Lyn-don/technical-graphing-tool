@@ -16,10 +16,6 @@ function App() {
 	const [graphMessage, setGraphMessage] = useState<string>("");
 	const appRef = useRef<HTMLDivElement>(null);
 
-	console.log(selectedData);
-
-	//console.log(selectedData.slice(selectedData.length-25,selectedData.length));
-
 	useEffect(() => {
 		if (fileData.length > 1) {
 			setMessage(
