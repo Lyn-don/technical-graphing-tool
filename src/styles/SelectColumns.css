@@ -1,15 +1,16 @@
-.select-columns {
-  justify-content: center;
-  border-top: 1px solid #dadada;
-  border-bottom: 1px solid #dadada;
+.div--select-columns {
+  	justify-content: center;
+	align-items: center;
+ 	border-top: 1px solid #dadada;
+  	border-bottom: 1px solid #dadada;
 }
 
-.select-group {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.ul--select-group {
+  	display: flex;
+  	align-items: center;
+  	justify-content: center;
 }
 
-.select-group > * {
-  padding: 0.2em;
+.ul--select-group > * {
+  	padding: 0.2em;
 }

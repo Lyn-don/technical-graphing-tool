@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useCSVDownloader, jsonToCSV } from "react-papaparse";
+import "../styles/SaveFile.css"
 
 function combineArrayObjects(
 	arr1: Array<object>,
@@ -40,7 +41,7 @@ function SaveFile({ fileData, markedData, setMessage }: Props) {
 
 	if (data) {
 		return (
-			<div className="div--save-data">
+			<div className="div--save-file">
 				<CSVDownloader
 					type={Type.Button}
 					filename={filename}
@@ -53,7 +54,7 @@ function SaveFile({ fileData, markedData, setMessage }: Props) {
 				>
 					Download file
 				</CSVDownloader>
-				<input
+				<input className="input--filename"
 					type="text"
 					placeholder="Enter filename"
 					onChange={(e) => {
@@ -66,7 +67,7 @@ function SaveFile({ fileData, markedData, setMessage }: Props) {
 			</div>
 		);
 	} else {
-		return <div className="div--save-data"></div>;
+		return <div className="div--save-file"></div>;
 	}
 }
 export default SaveFile;

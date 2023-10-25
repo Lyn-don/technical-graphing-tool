@@ -42,7 +42,7 @@ function SelectColumns({
 		volume: "",
 		ml_signal: "",
 	});
-	console.log("RRRRR!W");
+
 	const selectRef = React.createRef<HTMLSelectElement>();
 	const selectRef2 = React.createRef<HTMLSelectElement>();
 	const selectRef3 = React.createRef<HTMLSelectElement>();
@@ -65,8 +65,8 @@ function SelectColumns({
 
 	if (fileData.length > 1) {
 		return (
-			<div className="select-columns">
-				<ul className="select-group">
+			<div className="div--select-columns">
+				<ul className="ul--select-group">
 					<li>
 						<p>Time</p>
 						<select
@@ -172,7 +172,7 @@ function SelectColumns({
 							))}
 						</select>
 					</li>
-					<button
+					<button className="button--select-columns"
 						onClick={function () {
 							let processFileData = fileData.map(function (
 								el: any
@@ -220,8 +220,6 @@ function SelectColumns({
 											: null,
 								};
 							});
-							console.log("lllllll");
-							console.log(processFileData);
 
 							let selectedFileData = processFileData.map((el) => {
 								let o = Object.keys(selectedColumns).filter(
@@ -239,15 +237,12 @@ function SelectColumns({
 								return obj;
 							});
 
-							console.log("pppppppp!");
-							console.log(selectedFileData);
-
 							if (
 								!Object.keys(selectedFileData[0]).includes(
 									"ml_signal"
 								)
 							) {
-								console.log("HELLO!");
+							
 								selectedFileData = selectedFileData.map(
 									(array) => ({
 										...array,
@@ -308,8 +303,6 @@ function SelectColumns({
 									"Please select a option for Time Open High Low Close"
 								);
 							} else {
-								console.log("zzzzzz!");
-								console.log(selectedFileData);
 								setSelectedData(selectedFileData);
 							}
 						}}

@@ -197,9 +197,40 @@ function GraphCandles({
 				let markData = markData1.concat(markData0);
 				markData = markData.concat(markDataN1);
 				markData = markData.sort((a, b) => a.time - b.time);
+				
+				if(Object.keys(selectedData[0]).includes("volume")){
+					console.log("lol")
+					
+					let volumeHistogram = chart.addHistogramSeries({
+    						priceFormat: {
+        						type: 'volume',
+    						},
+    						priceScaleId: '', // set as an overlay by setting a blank priceScaleId
+						});
+
+					volumeHistogram.priceScale().applyOptions({
+							// set the positioning of the volume series
+						scaleMargins: {
+						top: 0.75, // highest point of the series will be 70% away from the top
+						bottom: 0,
+						},
+					});
+
+					let volumeData = selectedData.map((el)=>{
+						return {
+							time: el.time,
+							value: el.volume,
+							color: el.open < el.close ? "#1d7d74" : "#ab3a38",
+							
+						}
+					}); 
+
+					volumeHistogram.setData(volumeData);
+				}
 
 				candlestickSeries.setData(selectedData);
 				candlestickSeries.setMarkers(markData);
+
 			}
 
 			const handleResize = () => {
