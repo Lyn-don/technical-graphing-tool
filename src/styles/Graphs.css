@@ -1,3 +1,22 @@
-.div--graph-historical-selectedData-container {
-	margin: 1em 0.5em 1em 0.5em;
+.div--graph-historical-data {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+
+.ul--graph-historical-hover-over-data {
+	height: 2em;
+	width: 95%;
+	text-align: left;
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+	background-color: rgb(200, 200, 200);
+	border-radius: 0.5em;
+}
+
+.ul--graph-historical-hover-over-data > * {
+	width: 20em;
 }

@@ -1,4 +1,9 @@
-import { createChart, ColorType, Time, Logical } from "lightweight-charts";
+import {
+	createChart,
+	ColorType,
+	Logical,
+	MouseEventParams,
+} from "lightweight-charts";
 import SaveFile from "./SaveFile";
 import React, { useEffect, useRef, useState } from "react";
 import "../styles/Graphs.css";
@@ -24,9 +29,11 @@ function GraphCandles({
 	const [to, setTo] = useState<Logical>();
 	//array of 1 and 0, 1 means marked
 	const [markedData, setMarkedData] = useState<Array<object>>([]);
+	//hover over value
+	const [hoverOverValue, setHoverOverValue] = useState<object>({});
 
 	useEffect(() => {
-		if (chartContainerRef.current) {
+		if (chartContainerRef.current && selectedData.length) {
 			if (chartContainerRef.current.children.length) {
 				chartContainerRef.current.removeChild(
 					chartContainerRef.current.children[0]
@@ -67,68 +74,69 @@ function GraphCandles({
 				);
 			}
 			//click candles to mark them
-			function handleClick(param: any): void {
+			function handleClick(param: MouseEventParams): void {
 				console.log(param);
+				if (param.sourceEvent) {
+					let index = selectedData.findIndex(
+						(el) => el.time == param.time
+					);
 
-				let index = selectedData.findIndex(
-					(el) => el.time == param.time
-				);
-
-				//delete marks double click + ctrl
-				if (param.sourceEvent.ctrlKey) {
-					//skip if already null
-					if (selectedData[index]["ml_signal"] == null) {
-						console.log("already empty.");
-						return;
-					}
-
-					//backfill the marks on the graph by 8
-					let i = index;
-					while (selectedData[i]["ml_signal"] != null) {
-						selectedData[i]["ml_signal"] = null;
-						i++;
-					}
-
-					i = index - 1;
-
-					while (selectedData[i]["ml_signal"] != null) {
-						selectedData[i]["ml_signal"] = null;
-						i--;
-					}
-				}
-
-				if (!param.sourceEvent.ctrlKey) {
-					//skip if already marked
-					if (selectedData[index]["ml_signal"] != null) {
-						console.log("already marked");
-						return;
-					}
-
-					//if any of the next 8 candles is already marked, skip
-					let last8 = selectedData.slice(index - 7, index);
-					if (last8.some((el) => el["ml_signal"] != null)) {
-						return;
-					}
-
-					if (param.sourceEvent.shiftKey) {
-						//backfill the marks on the graph by 8 with 1
-						for (let i = index; i > index - 8; i--) {
-							selectedData[i]["ml_signal"] = 1;
+					//delete marks double click + ctrl
+					if (param.sourceEvent.ctrlKey) {
+						//skip if already null
+						if (selectedData[index]["ml_signal"] == null) {
+							console.log("already empty.");
+							return;
 						}
-					} else if (param.sourceEvent.altKey) {
-						//backfill the marks on the graph by 8 with -1
-						for (let i = index; i > index - 8; i--) {
-							selectedData[i]["ml_signal"] = -1;
+
+						//backfill the marks on the graph by 8
+						let i = index;
+						while (selectedData[i]["ml_signal"] != null) {
+							selectedData[i]["ml_signal"] = null;
+							i++;
 						}
-					} else if (
-						!param.sourceEvent.ctrlKey &&
-						!param.sourceEvent.shiftKey &&
-						!param.sourceEvent.altKey &&
-						!param.sourceEvent.metaKey
-					) {
-						//backfill the marks on the graph by 8 with 0
-						for (let i = index; i > index - 8; i--) {
-							selectedData[i]["ml_signal"] = 0;
+
+						i = index - 1;
+
+						while (selectedData[i]["ml_signal"] != null) {
+							selectedData[i]["ml_signal"] = null;
+							i--;
+						}
+					}
+
+					if (!param.sourceEvent.ctrlKey) {
+						//skip if already marked
+						if (selectedData[index]["ml_signal"] != null) {
+							console.log("already marked");
+							return;
+						}
+
+						//if any of the next 8 candles is already marked, skip
+						let last8 = selectedData.slice(index - 7, index);
+						if (last8.some((el) => el["ml_signal"] != null)) {
+							return;
+						}
+
+						if (param.sourceEvent.shiftKey) {
+							//backfill the marks on the graph by 8 with 1
+							for (let i = index; i > index - 8; i--) {
+								selectedData[i]["ml_signal"] = 1;
+							}
+						} else if (param.sourceEvent.altKey) {
+							//backfill the marks on the graph by 8 with -1
+							for (let i = index; i > index - 8; i--) {
+								selectedData[i]["ml_signal"] = -1;
+							}
+						} else if (
+							!param.sourceEvent.ctrlKey &&
+							!param.sourceEvent.shiftKey &&
+							!param.sourceEvent.altKey &&
+							!param.sourceEvent.metaKey
+						) {
+							//backfill the marks on the graph by 8 with 0
+							for (let i = index; i > index - 8; i--) {
+								selectedData[i]["ml_signal"] = 0;
+							}
 						}
 					}
 				}
@@ -151,6 +159,37 @@ function GraphCandles({
 
 			chart.subscribeDblClick((param) => {
 				handleClick(param);
+			});
+
+			function handleMouseMove(param: MouseEventParams): void {
+				if (param) {
+					console.log(param);
+					if (param.time) {
+						let hoveredOverData =
+							selectedData[
+								selectedData.findIndex(
+									(el) => el.time == param.time
+								)
+							];
+						/*hoveredOverData = {
+							time: new Date(hoverOverValue.time),
+							open: hoverOverValue.open,
+							high: hoverOverValue.high,
+							low: hoverOverValue.low,
+							close: hoverOverValue.close,
+							volume: hoverOverValue.volume
+						}*/
+
+						console.log(hoverOverValue);
+
+						setHoverOverValue(hoveredOverData);
+					}
+				}
+			}
+
+			chart.subscribeCrosshairMove((param) => {
+				//console.log(param);
+				handleMouseMove(param);
 			});
 
 			if (keys.includes("time") && keys.length > 4) {
@@ -197,40 +236,38 @@ function GraphCandles({
 				let markData = markData1.concat(markData0);
 				markData = markData.concat(markDataN1);
 				markData = markData.sort((a, b) => a.time - b.time);
-				
-				if(Object.keys(selectedData[0]).includes("volume")){
-					console.log("lol")
-					
+
+				if (Object.keys(selectedData[0]).includes("volume")) {
+					console.log("lol");
+
 					let volumeHistogram = chart.addHistogramSeries({
-    						priceFormat: {
-        						type: 'volume',
-    						},
-    						priceScaleId: '', // set as an overlay by setting a blank priceScaleId
-						});
+						priceFormat: {
+							type: "volume",
+						},
+						priceScaleId: "", // set as an overlay by setting a blank priceScaleId
+					});
 
 					volumeHistogram.priceScale().applyOptions({
-							// set the positioning of the volume series
+						// set the positioning of the volume series
 						scaleMargins: {
-						top: 0.75, // highest point of the series will be 70% away from the top
-						bottom: 0,
+							top: 0.75, // highest point of the series will be 70% away from the top
+							bottom: 0,
 						},
 					});
 
-					let volumeData = selectedData.map((el)=>{
+					let volumeData = selectedData.map((el) => {
 						return {
 							time: el.time,
 							value: el.volume,
 							color: el.open < el.close ? "#1d7d74" : "#ab3a38",
-							
-						}
-					}); 
+						};
+					});
 
 					volumeHistogram.setData(volumeData);
 				}
 
 				candlestickSeries.setData(selectedData);
 				candlestickSeries.setMarkers(markData);
-
 			}
 
 			const handleResize = () => {
@@ -259,11 +296,24 @@ function GraphCandles({
 		}
 	}, [selectedData, fileData, clickEventObject]);
 
+	if (selectedData.length) {
+		console.log(selectedData);
+	}
 	if (fileData.length && selectedData.length) {
 		return (
-			<div className="div--graph-historical-selectedData-container">
+			<div className="div--graph-historical-data-container">
+				<div className="div--graph-historical-hover-over-data-wrapper">
+					<ul className="ul--graph-historical-hover-over-data">
+						<li>Open:{hoverOverValue.open}</li>
+						<li>High:{hoverOverValue.high}</li>
+						<li>Low:{hoverOverValue.low}</li>
+						<li>Close:{hoverOverValue.close}</li>
+						<li>Volume:{hoverOverValue.volume}</li>
+						<li>Signal:{hoverOverValue.ml_signal}</li>
+					</ul>
+				</div>
 				<div
-					className="div--graph-historical-selectedData"
+					className="div--graph-historical-data"
 					ref={chartContainerRef as React.RefObject<HTMLDivElement>}
 				></div>
 				<SaveFile
@@ -274,9 +324,7 @@ function GraphCandles({
 			</div>
 		);
 	} else {
-		return (
-			<div className="div--graph-historical-selectedData-container"></div>
-		);
+		return <div className="div--graph-historical-data-container"></div>;
 	}
 }
 
