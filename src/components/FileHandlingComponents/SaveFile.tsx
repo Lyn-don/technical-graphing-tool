@@ -1,6 +1,6 @@
-import { useState, useEffect, useRef } from "react";
-import { useCSVDownloader, jsonToCSV } from "react-papaparse";
-import "../styles/SaveFile.css"
+import { useState, useEffect } from "react";
+import { useCSVDownloader } from "react-papaparse";
+import "../../styles/SaveFile.css"
 
 function combineArrayObjects(
 	arr1: Array<object>,

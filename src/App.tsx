@@ -2,9 +2,9 @@ import React, { useState, useRef, useEffect } from "react";
 //import as papa * from "papaparse"
 //import { invoke } from "@tauri-apps/api/tauri";
 
-import ImportUserFile from "./components/ImportUserFile";
-import GraphCandles from "./components/GraphCandles";
-import SelectColumns from "./components/SelectColumns";
+import ImportUserFile from "./components/FileHandlingComponents/ImportUserFile";
+import GraphCandles from "./components/GraphComponents/GraphCandles";
+import SelectColumns from "./components/PreGraphComponents/SelectColumns";
 
 import "./styles/App.css";
 
@@ -14,6 +14,7 @@ function App() {
 	const [selectedData, setSelectedData] = useState<object[]>([]);
 	const [message, setMessage] = useState<string>("Select a csv file.");
 	const [graphMessage, setGraphMessage] = useState<string>("");
+	const [timePeriodAmount, setTimePeriodAmount] = useState<number>(0);
 	const appRef = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
@@ -29,7 +30,7 @@ function App() {
 	}, [fileData, selectedData]);
 
 	return (
-		<div ref={appRef} className="container">
+		<div ref={appRef} className="container"> 
 			<div className="menu">
 				<div className="menu-content">
 					{message}
@@ -45,6 +46,7 @@ function App() {
 						fileColumns={fileColumns}
 						setSelectedData={setSelectedData}
 						setMessage={setMessage}
+						setTimePeriodAmount={setTimePeriodAmount}
 					/>
 				</div>
 			</div>
@@ -54,6 +56,7 @@ function App() {
 				fileData={fileData}
 				setMessage={setMessage}
 				setGraphMessage={setGraphMessage}
+				timePeriodAmount={timePeriodAmount}
 			/>
 		</div>
 	);

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import "../styles/SelectColumns.css";
+import "../../styles/SelectColumns.css";
 type TOhlcv = {
 	time: number | null;
 	open: number | null;
@@ -25,6 +25,7 @@ type TSelectedColumns = {
 	fileColumns: string[];
 	setSelectedData: React.Dispatch<React.SetStateAction<object[]>>;
 	setMessage: React.Dispatch<React.SetStateAction<string>>;
+	setTimePeriodAmount: React.Dispatch<React.SetStateAction<number>>;
 };
 
 function SelectColumns({
@@ -32,6 +33,8 @@ function SelectColumns({
 	fileColumns,
 	setSelectedData,
 	setMessage,
+	setTimePeriodAmount,
+	
 }: TSelectedColumns) {
 	const [selectedColumns, setSelectedColumns] = useState<TUserColumns>({
 		time: "",
@@ -52,14 +55,23 @@ function SelectColumns({
 	const selectRef7 = React.createRef<HTMLSelectElement>();
 
 	useEffect(() => {
-		if (fileData.length > 1) {
-			selectRef.current!.value = "Select one...";
-			selectRef2.current!.value = "Select one...";
-			selectRef3.current!.value = "Select one...";
-			selectRef4.current!.value = "Select one...";
-			selectRef5.current!.value = "Select one...";
-			selectRef6.current!.value = "Select one...";
-			selectRef7.current!.value = "Select one...";
+		if (fileData.length > 1 && fileColumns.length > 1) {
+			/*
+			selectRef.current!.value = fileColumns[0]?fileColumns[0]:"Select one...";
+			selectRef2.current!.value = fileColumns[1]?fileColumns[1]:"Select one...";
+			selectRef3.current!.value = fileColumns[2]?fileColumns[2]:"Select one...";
+			selectRef4.current!.value = fileColumns[3]?fileColumns[3]:"Select one...";
+			selectRef5.current!.value = fileColumns[4]?fileColumns[4]:"Select one...";
+			selectRef6.current!.value = fileColumns[5]?fileColumns[5]:"Select one...";
+			selectRef7.current!.value = "Select one...";*/
+
+			selectRef.current!.value = "Select one..."
+			selectRef2.current!.value = "Select one..."
+			selectRef3.current!.value = "Select one..."
+			selectRef4.current!.value = "Select one..."
+			selectRef5.current!.value = "Select one..."
+			selectRef6.current!.value = "Select one..."
+			selectRef7.current!.value = "Select one..."
 		}
 	}, [fileData]);
 
@@ -303,6 +315,7 @@ function SelectColumns({
 									"Please select a option for Time Open High Low Close"
 								);
 							} else {
+								setTimePeriodAmount( Math.abs(selectedFileData[1].time-selectedFileData[0].time));
 								setSelectedData(selectedFileData);
 							}
 						}}

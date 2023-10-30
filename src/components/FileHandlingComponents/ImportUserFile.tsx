@@ -1,7 +1,7 @@
-import { useRef, useState } from "react";
-import { readString, readRemoteFile, usePapaParse } from "react-papaparse";
+import { useRef} from "react";
+import { readRemoteFile} from "react-papaparse";
 import Papa from "papaparse";
-import "../styles/ImportUserFile.css"
+import "../../styles/ImportUserFile.css"
 type TOhlcv = {
 	time: number;
 	open: number;

@@ -5,6 +5,16 @@
 	align-items: center;
 }
 
+.input--graph-historical-open-close-difference{
+	width: 14em;
+}
+
+.div--graph-historical-hover-over-data-container{
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
 .ul--graph-historical-hover-over-data {
 	height: 2em;
 	width: 95%;
