@@ -83,12 +83,9 @@ function GraphCandles({
 			function handleClick(param: MouseEventParams): void {
 			
 
-				if (param.sourceEvent&&param.time) {
-					//find the index of the time without iterating through the array
-					let indexMax = selectedData.length-1;
-					let timeMax = +selectedData[indexMax].time;
-					let eventTime = +param.time;
-					let index = indexMax-((timeMax - eventTime)/timePeriodAmount);
+				if (param.sourceEvent&&param.time&&param.logical) {
+			
+					let index = param.logical;
 
 					//delete marks double click + ctrl
 					if (param.sourceEvent.ctrlKey) {
@@ -99,7 +96,7 @@ function GraphCandles({
 						}
 
 						//backfill the marks on the graph by 8
-						let i = index;
+						let i:number = index;
 						while (selectedData[i]["ml_signal"] != null) {
 							selectedData[i]["ml_signal"] = null;
 							i++;
@@ -173,14 +170,9 @@ function GraphCandles({
 
 			function handleMouseMove(param: MouseEventParams): void {
 
-			
-				
 				if (param&&param.time) {
 					//find the index of the time without iterating through the array
-					let indexMax = selectedData.length-1;
-					let timeMax = +selectedData[indexMax].time;
-					let eventTime = +param.time;
-					let index = indexMax-((timeMax - eventTime)/timePeriodAmount);
+					let index = param.logical
 
 					if(index){
 						let hoveredOverData = selectedData[index];
@@ -194,15 +186,20 @@ function GraphCandles({
 			chart.subscribeCrosshairMove((param) => {
 				setLockEvent(true);
 				if(!lockEvent){
-				handleMouseMove(param);
+					handleMouseMove(param);
 				}
 				setLockEvent(false);
-				
+
 				//set the current viewable range for the next time the graph is rendered
 				//@ts-ignore
 				setFrom(chart.timeScale().getVisibleLogicalRange().from);
 				//@ts-ignore
 				setTo(chart.timeScale().getVisibleLogicalRange().to);
+
+				//console.log(param);
+				//console.log(chart);
+				//console.log(selectedData);
+				console.log(chart.priceScale("left").width());
 			});
 
 		
