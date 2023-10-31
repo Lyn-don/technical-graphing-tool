@@ -42,7 +42,17 @@ function SaveFile({ fileData, markedData, setMessage }: Props) {
 	if (data) {
 		return (
 			<div className="div--save-file">
-				<CSVDownloader
+				
+				<input className="input--filename"
+					type="text"
+					placeholder="Enter filename"
+					onChange={(e) => {
+						if (e.target.value) {
+							let text: string = e.target.value.split(".")[0];
+							setFilename(text);
+						}
+					}}
+				/><CSVDownloader
 					type={Type.Button}
 					filename={filename}
 					bom={true}
@@ -54,16 +64,6 @@ function SaveFile({ fileData, markedData, setMessage }: Props) {
 				>
 					Download file
 				</CSVDownloader>
-				<input className="input--filename"
-					type="text"
-					placeholder="Enter filename"
-					onChange={(e) => {
-						if (e.target.value) {
-							let text: string = e.target.value.split(".")[0];
-							setFilename(text);
-						}
-					}}
-				/>
 			</div>
 		);
 	} else {

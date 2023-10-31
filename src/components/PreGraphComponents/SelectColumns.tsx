@@ -184,6 +184,7 @@ function SelectColumns({
 							))}
 						</select>
 					</li>
+					<li className="div--button-select-columns-wrapper">
 					<button className="button--select-columns"
 						onClick={function () {
 							let processFileData = fileData.map(function (
@@ -321,7 +322,7 @@ function SelectColumns({
 						}}
 					>
 						Graph Columns
-					</button>
+					</button></li>
 				</ul>
 			</div>
 		);

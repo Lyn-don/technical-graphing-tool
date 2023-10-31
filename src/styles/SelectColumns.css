@@ -7,10 +7,24 @@
 
 .ul--select-group {
   	display: flex;
-  	align-items: center;
+  	align-items:center;
   	justify-content: center;
+	height: 2em;
+	margin: 1em;
 }
 
 .ul--select-group > * {
-  	padding: 0.2em;
+  	padding: 0.1em;
+}
+
+.ul--select-group > li > p {
+	height: 1em;
+	padding: .2em;
+	margin: .2em;
+}
+
+.ul--select-group > button{
+	display: flex;
+	align-items: center;
+	justify-content: center;	
 }

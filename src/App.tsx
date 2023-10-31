@@ -31,7 +31,15 @@ function App() {
 
 	return (
 		<div ref={appRef} className="container"> 
-			<div className="menu">
+			
+			
+			<GraphCandles
+				selectedData={selectedData}
+				fileData={fileData}
+				setMessage={setMessage}
+				setGraphMessage={setGraphMessage}
+				timePeriodAmount={timePeriodAmount}
+			/>{graphMessage}<div className="menu">
 				<div className="menu-content">
 					{message}
 					<ImportUserFile
@@ -50,14 +58,6 @@ function App() {
 					/>
 				</div>
 			</div>
-			{graphMessage}
-			<GraphCandles
-				selectedData={selectedData}
-				fileData={fileData}
-				setMessage={setMessage}
-				setGraphMessage={setGraphMessage}
-				timePeriodAmount={timePeriodAmount}
-			/>
 		</div>
 	);
 }
