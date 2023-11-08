@@ -34,7 +34,6 @@ function SelectColumns({
 	setSelectedData,
 	setMessage,
 	setTimePeriodAmount,
-	
 }: TSelectedColumns) {
 	const [selectedColumns, setSelectedColumns] = useState<TUserColumns>({
 		time: "",
@@ -56,22 +55,13 @@ function SelectColumns({
 
 	useEffect(() => {
 		if (fileData.length > 1 && fileColumns.length > 1) {
-			/*
-			selectRef.current!.value = fileColumns[0]?fileColumns[0]:"Select one...";
-			selectRef2.current!.value = fileColumns[1]?fileColumns[1]:"Select one...";
-			selectRef3.current!.value = fileColumns[2]?fileColumns[2]:"Select one...";
-			selectRef4.current!.value = fileColumns[3]?fileColumns[3]:"Select one...";
-			selectRef5.current!.value = fileColumns[4]?fileColumns[4]:"Select one...";
-			selectRef6.current!.value = fileColumns[5]?fileColumns[5]:"Select one...";
-			selectRef7.current!.value = "Select one...";*/
-
-			selectRef.current!.value = "Select one..."
-			selectRef2.current!.value = "Select one..."
-			selectRef3.current!.value = "Select one..."
-			selectRef4.current!.value = "Select one..."
-			selectRef5.current!.value = "Select one..."
-			selectRef6.current!.value = "Select one..."
-			selectRef7.current!.value = "Select one..."
+			selectRef.current!.value = "Select one...";
+			selectRef2.current!.value = "Select one...";
+			selectRef3.current!.value = "Select one...";
+			selectRef4.current!.value = "Select one...";
+			selectRef5.current!.value = "Select one...";
+			selectRef6.current!.value = "Select one...";
+			selectRef7.current!.value = "Select one...";
 		}
 	}, [fileData]);
 
@@ -185,144 +175,173 @@ function SelectColumns({
 						</select>
 					</li>
 					<li className="div--button-select-columns-wrapper">
-					<button className="button--select-columns"
-						onClick={function () {
-							let processFileData = fileData.map(function (
-								el: any
-							): TOhlcv {
-								return {
-									time: (new Date(
-										el[
+						<button
+							className="button--select-columns"
+							onClick={function () {
+								let processFileData = fileData.map(function (
+									el: any
+								): TOhlcv {
+									return {
+										time: !+el[
 											selectedColumns[
 												"time"
 											] as keyof typeof el
 										]
-									).getTime() / 1000) as number,
-									open: +el[
-										selectedColumns[
-											"open"
-										] as keyof typeof el
-									],
-									high: +el[
-										selectedColumns[
-											"high"
-										] as keyof typeof el
-									],
-									low: +el[
-										selectedColumns[
-											"low"
-										] as keyof typeof el
-									],
-									close: +el[
-										selectedColumns[
-											"close"
-										] as keyof typeof el
-									],
-									volume: +el[
-										selectedColumns[
-											"volume"
-										] as keyof typeof el
-									],
-									ml_signal:
-										el[selectedColumns["ml_signal"]] != ""
-											? +el[
+											? ((new Date(
+													el[
+														selectedColumns[
+															"time"
+														] as keyof typeof el
+													]
+											  ).getTime() / 1000) as number)
+											: +el[
 													selectedColumns[
-														"ml_signal"
+														"time"
 													] as keyof typeof el
-											  ]
-											: null,
-								};
-							});
-
-							let selectedFileData = processFileData.map((el) => {
-								let o = Object.keys(selectedColumns).filter(
-									(k) =>
-										selectedColumns[
-											k as keyof typeof selectedColumns
-										] !== ""
-								);
-
-								let obj: { [key: string]: any } = {}; // add index signature to allow indexing with a string
-								o.forEach((col_names) => {
-									obj[col_names] =
-										el[col_names as keyof typeof el];
+											  ].substring(0, 10),
+										open: +el[
+											selectedColumns[
+												"open"
+											] as keyof typeof el
+										],
+										high: +el[
+											selectedColumns[
+												"high"
+											] as keyof typeof el
+										],
+										low: +el[
+											selectedColumns[
+												"low"
+											] as keyof typeof el
+										],
+										close: +el[
+											selectedColumns[
+												"close"
+											] as keyof typeof el
+										],
+										volume: +el[
+											selectedColumns[
+												"volume"
+											] as keyof typeof el
+										],
+										ml_signal:
+											el[selectedColumns["ml_signal"]] !=
+											""
+												? +el[
+														selectedColumns[
+															"ml_signal"
+														] as keyof typeof el
+												  ]
+												: null,
+									};
 								});
-								return obj;
-							});
 
-							if (
-								!Object.keys(selectedFileData[0]).includes(
-									"ml_signal"
-								)
-							) {
-							
-								selectedFileData = selectedFileData.map(
-									(array) => ({
-										...array,
-										ml_signal: null,
-									})
+								let selectedFileData = processFileData.map(
+									(el) => {
+										let o = Object.keys(
+											selectedColumns
+										).filter(
+											(k) =>
+												selectedColumns[
+													k as keyof typeof selectedColumns
+												] !== ""
+										);
+
+										let obj: { [key: string]: any } = {}; // add index signature to allow indexing with a string
+										o.forEach((col_names) => {
+											obj[col_names] =
+												el[
+													col_names as keyof typeof el
+												];
+										});
+										return obj;
+									}
 								);
-							}
 
-							let selectColumnsKeys: string[] =
-								Object.keys(selectedColumns);
-							for (let i = 1; i < selectColumnsKeys.length; i++) {
-								const key = selectColumnsKeys[
-									i
-								] as keyof TUserColumns;
-								if (selectedColumns[key] === "Select one...") {
-									selectedColumns[key] = "";
+								if (
+									!Object.keys(selectedFileData[0]).includes(
+										"ml_signal"
+									)
+								) {
+									selectedFileData = selectedFileData.map(
+										(array) => ({
+											...array,
+											ml_signal: null,
+										})
+									);
 								}
-							}
 
-							if (
-								selectedColumns["time"] == "" ||
-								selectedColumns["open"] == "" ||
-								selectedColumns["high"] == "" ||
-								selectedColumns["low"] == "" ||
-								selectedColumns["close"] == ""
-							) {
-								setSelectedColumns({
-									time:
-										selectedColumns["time"] == ""
-											? ""
-											: selectedColumns["time"],
-									open:
-										selectedColumns["open"] == ""
-											? ""
-											: selectedColumns["open"],
-									high:
-										selectedColumns["high"] == ""
-											? ""
-											: selectedColumns["high"],
-									low:
-										selectedColumns["low"] == ""
-											? ""
-											: selectedColumns["low"],
-									close:
-										selectedColumns["close"] == ""
-											? ""
-											: selectedColumns["close"],
-									volume:
-										selectedColumns["volume"] == ""
-											? ""
-											: selectedColumns["volume"],
-									ml_signal:
-										selectedColumns["ml_signal"] == ""
-											? ""
-											: selectedColumns["ml_signal"],
-								});
-								setMessage(
-									"Please select a option for Time Open High Low Close"
-								);
-							} else {
-								setTimePeriodAmount( Math.abs(selectedFileData[1].time-selectedFileData[0].time));
-								setSelectedData(selectedFileData);
-							}
-						}}
-					>
-						Graph Columns
-					</button></li>
+								let selectColumnsKeys: string[] =
+									Object.keys(selectedColumns);
+								for (
+									let i = 1;
+									i < selectColumnsKeys.length;
+									i++
+								) {
+									const key = selectColumnsKeys[
+										i
+									] as keyof TUserColumns;
+									if (
+										selectedColumns[key] === "Select one..."
+									) {
+										selectedColumns[key] = "";
+									}
+								}
+
+								if (
+									selectedColumns["time"] == "" ||
+									selectedColumns["open"] == "" ||
+									selectedColumns["high"] == "" ||
+									selectedColumns["low"] == "" ||
+									selectedColumns["close"] == ""
+								) {
+									setSelectedColumns({
+										time:
+											selectedColumns["time"] == ""
+												? ""
+												: selectedColumns["time"],
+										open:
+											selectedColumns["open"] == ""
+												? ""
+												: selectedColumns["open"],
+										high:
+											selectedColumns["high"] == ""
+												? ""
+												: selectedColumns["high"],
+										low:
+											selectedColumns["low"] == ""
+												? ""
+												: selectedColumns["low"],
+										close:
+											selectedColumns["close"] == ""
+												? ""
+												: selectedColumns["close"],
+										volume:
+											selectedColumns["volume"] == ""
+												? ""
+												: selectedColumns["volume"],
+										ml_signal:
+											selectedColumns["ml_signal"] == ""
+												? ""
+												: selectedColumns["ml_signal"],
+									});
+									setMessage(
+										"Please select a option for Time Open High Low Close"
+									);
+								} else {
+									setTimePeriodAmount(
+										Math.abs(
+											selectedFileData[1].time -
+												selectedFileData[0].time
+										)
+									);
+									setSelectedData(selectedFileData);
+								}
+							}}
+						>
+							Graph Columns
+						</button>
+					</li>
 				</ul>
 			</div>
 		);

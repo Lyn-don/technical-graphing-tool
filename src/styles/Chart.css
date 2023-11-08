@@ -3,19 +3,18 @@
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
+	height: 80vh;
 }
 
-.input--graph-historical-open-close-difference{
+.input--graph-historical-open-close-difference {
 	width: 14em;
-	
 }
 
-.div--graph-historical-hover-over-data-container{
+.div--graph-historical-hover-over-data-container {
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
-
 }
 
 .ul--graph-historical-hover-over-data {
@@ -28,18 +27,17 @@
 	justify-content: center;
 	align-items: center;
 	background-color: rgb(0, 0, 0);
-
 }
 
 .ul--graph-historical-hover-over-data > * {
 	width: 15em;
 }
 
-.div--graph-historical-data-sub-menu-wrapper>*{
+.div--graph-historical-data-sub-menu-wrapper > * {
 	margin: 0.5em;
 }
 
-.div--graph-historical-data-sub-menu-wrapper{
+.div--graph-historical-data-sub-menu-wrapper {
 	display: flex;
 	justify-content: center;
 	align-items: center;

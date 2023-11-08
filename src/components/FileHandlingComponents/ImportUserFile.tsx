@@ -1,7 +1,7 @@
-import { useRef} from "react";
-import { readRemoteFile} from "react-papaparse";
+import { useRef } from "react";
+import { readRemoteFile } from "react-papaparse";
 import Papa from "papaparse";
-import "../../styles/ImportUserFile.css"
+import "../../styles/ImportUserFile.css";
 type TOhlcv = {
 	time: number;
 	open: number;
@@ -23,27 +23,24 @@ type TImportUserFile = {
 	setSelectedData: React.Dispatch<React.SetStateAction<object[]>>;
 };
 
-
-function getMaxStackSize():number{
-	var i:number = 0;
+function getMaxStackSize(): number {
+	var i: number = 0;
 
 	function inc() {
-  		i++;
- 		inc();
+		i++;
+		inc();
 	}
-    
-	try {
-  		inc();
-	}
-	catch(e) {
-  		// The StackOverflow sandbox adds one frame that is not being counted by this code
-  		// Incrementing once manually
-  		i++;
-  		console.log('Maximum stack size is', i, 'in your current browser');
-	}
-		return i;
-}
 
+	try {
+		inc();
+	} catch (e) {
+		// The StackOverflow sandbox adds one frame that is not being counted by this code
+		// Incrementing once manually
+		i++;
+		console.log("Maximum stack size is", i, "in your current browser");
+	}
+	return i;
+}
 
 function ImportUserFile({
 	setFileData,
@@ -58,7 +55,7 @@ function ImportUserFile({
 		let data: object[] = [];
 
 		console.log(file);
-		
+
 		let chunkSize = getMaxStackSize();
 
 		//@ts-ignore: readRemoteFile requires a string
@@ -69,7 +66,6 @@ function ImportUserFile({
 			worker: true,
 
 			chunk: function (results: Papa.ParseResult<Array<string>>) {
-				//console.log(results);
 				data.push(...results.data);
 
 				setMessage(
@@ -77,25 +73,9 @@ function ImportUserFile({
 						1
 					)}/${(file.size / 1000000).toFixed(1)} MB`
 				);
-
-				//console.log("file size:",file.size,"buffer size",results.meta.cursor);
-				//console.log(parseInt(file.size/10), parseInt(results.meta.cursor/10));
-				/*if (
-					Math.round(file.size / 10) ===
-					Math.round(results.meta.cursor / 10)
-				) {
-					setMessage("File loaded.");
-					console.log(data);
-					setFileData(data);
-
-					if (results.meta.fields) {
-						setFileColumns(results.meta.fields);
-					}
-					setMessage("File has been uploaded.");
-				}*/
 			},
 
-			complete: function() {
+			complete: function () {
 				setMessage("File loaded.");
 				console.log(data);
 				setFileData(data);
@@ -107,7 +87,8 @@ function ImportUserFile({
 
 	return (
 		<div className="div--import-file">
-			<input	className="input--import-file"
+			<input
+				className="input--import-file"
 				onClick={() => {
 					setMessage("Select a csv file.");
 					setFileData([]);
@@ -117,16 +98,17 @@ function ImportUserFile({
 				onChange={(e) => {
 					console.log(e);
 					if (e.target.files && inputFileRef.current) {
-				
 						e.preventDefault();
 						let fileSize: number = +e.target.files[0].size;
-						
+
 						let mbAmount = 300;
-						if(fileSize<1000000*mbAmount){
+						if (fileSize < 1000000 * mbAmount) {
 							//checks if the file is not larger the 300 megabytes
 							getCsv(e.target?.files[0]);
-						}else{
-							setMessage("File size must be less then 300MB! Pick another file.");
+						} else {
+							setMessage(
+								"File size must be less then 300MB! Pick another file."
+							);
 							e.target.value = "";
 							/*
 							setFileData([]);

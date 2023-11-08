@@ -1,5 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
-import {createChart,ColorType,Logical,MouseEventParams} from "lightweight-charts";
+import {
+	createChart,
+	ColorType,
+	Logical,
+	MouseEventParams,
+} from "lightweight-charts";
 import SaveFile from "../FileHandlingComponents/SaveFile";
 
 import "../../styles/Chart.css";
@@ -40,25 +45,28 @@ function GraphCandles({
 	//hover over value
 	const [hoverOverValue, setHoverOverValue] = useState<object>({});
 	//highlight open close difference
-	const [highlightOpenClose, setHighlightOpenClose] = useState<number>(0);	
+	const [highlightLastOpenCurrentClose, setHighlightLastOpenCurrentClose] =
+		useState<number>(0);
 	//number of highlighted candles
-	const [highlightedCandlesCount, setHighlightedCandlesCount] = useState<number>(0);
+	const [highlightedCandlesCount, setHighlightedCandlesCount] =
+		useState<number>(0);
 	//lock any graph events
 	const [lockEvent, setLockEvent] = useState<boolean>(false);
 	//current graph width
 	const [graphWidth, setGraphWidth] = useState<number>(0);
 
-
 	useEffect(() => {
+		console.log("GraphCandles useEffect");
 		if (chartContainerRef.current && selectedData.length) {
-			//remove the previous chart
+			console.log(chartContainerRef.current?.clientHeight);
+			//remove the previous chart from the last render
 			if (chartContainerRef.current.children.length) {
 				chartContainerRef.current.removeChild(
 					chartContainerRef.current.children[0]
 				);
 			}
 
-			let keys:string[] = Object.keys(selectedData[0]);
+			let keys: string[] = Object.keys(selectedData[0]);
 
 			let chart = createChart(chartContainerRef.current, {
 				layout: {
@@ -77,9 +85,9 @@ function GraphCandles({
 						visible: true,
 					},
 				},
-	
-				width: chartContainerRef.current?.clientWidth ,
-				height: chartContainerRef.current?.clientWidth / 3,
+
+				width: chartContainerRef.current?.clientWidth,
+				height: 1000,
 
 				timeScale: {
 					secondsVisible: true,
@@ -103,13 +111,19 @@ function GraphCandles({
 					"Double click on a candle to mark csv with 0.\nShift+Double-Click to mark with 1.\nAlt+Double-Click to mark the csv with -1.\nCtrl+Double-Click to delete connected marks.\n"
 				);
 			}
+
 			//click candles to mark them
 			function handleClick(param: MouseEventParams): void {
-				
-				if (param.sourceEvent&&param.time&&param.logical&&param.seriesData) {
-					
+				if (
+					param.sourceEvent &&
+					param.time &&
+					param.logical &&
+					param.seriesData
+				) {
 					//extract the event candle data from the event
-					let seriesDataCandle  = Array.from(param.seriesData.values())[0];
+					let seriesDataCandle = Array.from(
+						param.seriesData.values()
+					)[0];
 					//current event index
 					let index = param.logical;
 					//current event time
@@ -117,7 +131,6 @@ function GraphCandles({
 					//current source event
 					let sourceEvent = param.sourceEvent;
 
-					
 					//delete marks double click + ctrl
 					if (param.sourceEvent.ctrlKey) {
 						//skip if already null
@@ -128,7 +141,7 @@ function GraphCandles({
 						}
 
 						//backfill the marks on the graph by 8
-						let i:number = index;
+						let i: number = index;
 						while (selectedData[i]["ml_signal"] != null) {
 							selectedData[i]["ml_signal"] = null;
 							i++;
@@ -143,7 +156,6 @@ function GraphCandles({
 					}
 
 					if (!param.sourceEvent.ctrlKey) {
-
 						//skip if already marked
 						if (selectedData[index]["ml_signal"] != null) {
 							console.log("already marked");
@@ -178,9 +190,8 @@ function GraphCandles({
 							}
 						}
 					}
-					
 				}
-			
+
 				setMarkedData(
 					selectedData.map((el) => {
 						return {
@@ -188,24 +199,27 @@ function GraphCandles({
 						};
 					})
 				);
-				
-				setClickEventObject(param);setLockEvent(false);
+
+				setClickEventObject(param);
+				setLockEvent(false);
 			}
 
 			chart.subscribeDblClick((param) => {
-				
 				setLockEvent(true);
-				if(!lockEvent){
-				handleClick(param);
+				if (!lockEvent) {
+					handleClick(param);
 				}
 				setLockEvent(false);
 			});
 
 			function handleMouseMove(param: MouseEventParams): void {
-				
 				//console.log(chart.priceScale("right"));
-				if (param.sourceEvent&&param.time&&param.logical&&param.seriesData) {
-					
+				if (
+					param.sourceEvent &&
+					param.time &&
+					param.logical &&
+					param.seriesData
+				) {
 					//extract the event candle data from the event
 					let seriesData = Array.from(param.seriesData.values());
 					//current event index
@@ -215,28 +229,23 @@ function GraphCandles({
 					//current source event
 					let sourceEvent = param.sourceEvent;
 
-					if(index){
+					if (index) {
 						let hoveredOverData = selectedData[index];
 						setHoverOverValue(hoveredOverData);
-					}			
-									
+					}
 				}
-					
 			}
 
 			chart.subscribeCrosshairMove((param) => {
-				
 				handleMouseMove(param);
 				//set the current viewable range for the next time the graph is rendered
 				//@ts-ignore
 				setFrom(chart.timeScale().getVisibleLogicalRange().from);
 				//@ts-ignore
 				setTo(chart.timeScale().getVisibleLogicalRange().to);
-
 			});
 
 			if (keys.includes("time") && keys.length > 4) {
-				
 				const candlestickSeries = chart.addCandlestickSeries({
 					upColor: "#26a69a",
 					downColor: "#ef5350",
@@ -285,7 +294,6 @@ function GraphCandles({
 				markData = markData.sort((a, b) => a.time - b.time);
 
 				if (Object.keys(selectedData[0]).includes("volume")) {
-
 					let volumeHistogram = chart.addHistogramSeries({
 						priceFormat: {
 							type: "volume",
@@ -312,17 +320,20 @@ function GraphCandles({
 					volumeHistogram.setData(volumeData);
 				}
 
-				if (highlightOpenClose) {
-					console.log(highlightOpenClose);
+				if (highlightLastOpenCurrentClose) {
+					console.log(highlightLastOpenCurrentClose);
 
 					let selectedDataCopy = selectedData;
 
 					for (let i = 1; i < selectedDataCopy.length; i++) {
 						if (
-							Math.abs(
+							(Math.abs(
 								selectedDataCopy[i - 1].open -
 									selectedDataCopy[i].close
-							) > highlightOpenClose
+							) /
+								selectedDataCopy[i - 1].open) *
+								100 <
+							highlightLastOpenCurrentClose
 						) {
 							selectedDataCopy[i].color = "orange";
 							selectedDataCopy[i].wickColor = "orange";
@@ -333,7 +344,10 @@ function GraphCandles({
 					}
 
 					candlestickSeries.setData(selectedDataCopy);
-					setHighlightedCandlesCount(selectedDataCopy.filter((el)=>el.color=="orange").length);
+					setHighlightedCandlesCount(
+						selectedDataCopy.filter((el) => el.color == "orange")
+							.length
+					);
 				} else {
 					candlestickSeries.setData(
 						selectedData.map((el) => {
@@ -351,14 +365,12 @@ function GraphCandles({
 
 			const handleResize = () => {
 				if (chartContainerRef.current) {
-					//console.log(chart.options().width);
-					//console.log(chart.options().height);
 					console.log(chartContainerRef.current?.clientWidth);
 					console.log(chartContainerRef.current?.clientHeight);
 
 					chart.applyOptions({
-						width: chartContainerRef.current?.clientWidth ,
-				height: chartContainerRef.current?.clientWidth / 3,
+						width: chartContainerRef.current?.clientWidth,
+						height: chartContainerRef.current?.clientHeight,
 					});
 					setGraphWidth(chartContainerRef.current?.clientWidth);
 				}
@@ -370,7 +382,6 @@ function GraphCandles({
 					.setVisibleLogicalRange({ from: from, to: to });
 			}
 
-
 			//Events:
 			//window resize event
 			window.addEventListener("resize", handleResize);
@@ -380,7 +391,12 @@ function GraphCandles({
 				chart.remove();
 			};
 		}
-	}, [selectedData, fileData, clickEventObject, highlightOpenClose, ]);
+	}, [
+		selectedData,
+		fileData,
+		clickEventObject,
+		highlightLastOpenCurrentClose,
+	]);
 
 	/*
 	upColor: "#26a69a",
@@ -389,31 +405,37 @@ function GraphCandles({
 	if (fileData.length && selectedData.length) {
 		return (
 			<div className="div--graph-historical-data-container">
-				
-
 				<div
 					className="div--graph-historical-data"
 					ref={chartContainerRef as React.RefObject<HTMLDivElement>}
 				></div>
 				<div className="div--graph-historical-hover-over-data-container">
-					
-					<ul className="ul--graph-historical-hover-over-data" style={
-						//@ts-ignore
-						{color: hoverOverValue.close > hoverOverValue.open ? "#26a69a" : "#ef5350" , width: `${graphWidth-40}px`}
-					}>
+					<ul
+						className="ul--graph-historical-hover-over-data"
+						style={{
+							color:
+								//@ts-ignore
+								hoverOverValue.close > hoverOverValue.open
+									? "#26a69a"
+									: "#ef5350",
+							width: `${graphWidth - 40}px`,
+						}}
+					>
 						<li>
 							Open:&nbsp;
 							{
 								//@ts-ignore
-								hoverOverValue.open? hoverOverValue.open.toFixed(2)
-									: null	
+								hoverOverValue.open //@ts-ignore
+									? hoverOverValue.open.toFixed(2)
+									: null
 							}
 						</li>
 						<li>
 							High:&nbsp;
 							{
 								//@ts-ignore
-								hoverOverValue.high? hoverOverValue.high.toFixed(2)
+								hoverOverValue.high //@ts-ignore
+									? hoverOverValue.high.toFixed(2)
 									: null
 							}
 						</li>
@@ -421,7 +443,8 @@ function GraphCandles({
 							Low:&nbsp;
 							{
 								//@ts-ignore
-								hoverOverValue.low? hoverOverValue.low.toFixed(2)
+								hoverOverValue.low //@ts-ignore
+									? hoverOverValue.low.toFixed(2)
 									: null
 							}
 						</li>
@@ -429,7 +452,8 @@ function GraphCandles({
 							Close:&nbsp;
 							{
 								//@ts-ignore
-								hoverOverValue.close? hoverOverValue.close.toFixed(2)
+								hoverOverValue.close //@ts-ignore
+									? hoverOverValue.close.toFixed(2)
 									: null
 							}
 						</li>
@@ -437,7 +461,8 @@ function GraphCandles({
 							Volume:&nbsp;
 							{
 								//@ts-ignore
-								hoverOverValue.volume? hoverOverValue.volume.toFixed(2)
+								hoverOverValue.volume //@ts-ignore
+									? hoverOverValue.volume.toFixed(2)
 									: null
 							}
 						</li>
@@ -445,35 +470,40 @@ function GraphCandles({
 							Signal:&nbsp;
 							{
 								//@ts-ignore
-								hoverOverValue.ml_signal!==null? hoverOverValue.ml_signal
+								hoverOverValue.ml_signal !== null //@ts-ignore
+									? hoverOverValue.ml_signal
 									: null
 							}
 						</li>
 					</ul>
-					</div>
-					
-					<div className="div--graph-historical-data-sub-menu-wrapper"><input
-					className="input--graph-historical-open-close-difference"
+				</div>
+
+				<div className="div--graph-historical-data-sub-menu-wrapper">
+					Open Close % Difference:
+					<input
+						className="input--graph-historical-open-close-difference"
 						type="text"
-						placeholder="Highlight open close difference"
+						placeholder="50 or .01"
 						onChange={(e) => {
 							if (
 								e.target.value == "" ||
 								e.target.value == "0" ||
 								!e.target.value
 							) {
-								setHighlightOpenClose(0);
+								setHighlightLastOpenCurrentClose(0);
 							} else {
-								setHighlightOpenClose(+e.target.value);
+								setHighlightLastOpenCurrentClose(
+									+e.target.value
+								);
 							}
-						
 						}}
-					></input>{" Highlighted Count: "+highlightedCandlesCount}
-				<SaveFile
-					fileData={fileData}
-					markedData={markedData}
-					setMessage={setMessage}
-				/>
+					></input>
+					{" Highlighted Count: " + highlightedCandlesCount}
+					<SaveFile
+						fileData={fileData}
+						markedData={markedData}
+						setMessage={setMessage}
+					/>
 				</div>
 			</div>
 		);
