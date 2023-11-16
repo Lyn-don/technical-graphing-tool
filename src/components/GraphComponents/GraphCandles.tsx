@@ -87,7 +87,6 @@ function GraphCandles({
 				},
 
 				width: chartContainerRef.current?.clientWidth,
-				height: 1000,
 
 				timeScale: {
 					secondsVisible: true,
@@ -332,11 +331,13 @@ function GraphCandles({
 									selectedDataCopy[i].close
 							) /
 								selectedDataCopy[i - 1].open) *
-								100 <
+								100 >=
 							highlightLastOpenCurrentClose
 						) {
 							selectedDataCopy[i].color = "orange";
 							selectedDataCopy[i].wickColor = "orange";
+							selectedDataCopy[i - 1].color = "orange";
+							selectedDataCopy[i - 1].wickColor = "orange";
 						} else {
 							selectedDataCopy[i].color = null;
 							selectedDataCopy[i].wickColor = null;
